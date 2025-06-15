@@ -1,0 +1,140 @@
+<html><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Newsreader%3Awght%40400%3B500%3B700%3B800&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;display: inline-block;
+        line-height: 1;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;-webkit-font-smoothing: antialiased;text-rendering: optimizeLegibility;-moz-osx-font-smoothing: grayscale;font-feature-settings: 'liga';
+      }
+    </style>
+</head>
+<body class="bg-gray-50" style='font-family: Newsreader, "Noto Sans", sans-serif;'>
+<div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-gray-200 px-10 py-4 bg-white sticky top-0 z-50">
+<div class="flex items-center gap-3 text-gray-800">
+<span class="material-icons text-primary-500" style="font-size: 32px; color: #3d98f4;">auto_stories</span>
+<h1 class="text-gray-800 text-2xl font-bold tracking-tight">Tech Tales</h1>
+</div>
+<nav class="flex flex-1 justify-end items-center gap-6">
+<div class="flex items-center gap-6">
+<a class="text-gray-700 hover:text-primary-500 text-base font-medium transition-colors duration-200" href="#" style="--hover-color: #3d98f4;">Home</a>
+<a class="text-gray-700 hover:text-primary-500 text-base font-medium transition-colors duration-200" href="#" style="--hover-color: #3d98f4;">Posts</a>
+<a class="text-gray-700 hover:text-primary-500 text-base font-medium transition-colors duration-200" href="#" style="--hover-color: #3d98f4;">About</a>
+<a class="text-gray-700 hover:text-primary-500 text-base font-medium transition-colors duration-200" href="#" style="--hover-color: #3d98f4;">Contact</a>
+</div>
+<div class="relative ml-4">
+<input class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 w-64 text-sm" placeholder="Search..." style="--ring-color: #3d98f4; --border-color: #3d98f4;" type="search"/>
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-gray-400">search</span>
+</div>
+</div>
+</nav>
+</header>
+<main class="px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-8">
+<div class="layout-content-container flex flex-col max-w-4xl flex-1 gap-12">
+<section>
+<h2 class="text-gray-800 text-3xl font-bold tracking-tight mb-6">Latest Posts</h2>
+<div class="grid grid-cols-1 md:grid-cols-1 gap-8">
+<article class="flex flex-col md:flex-row items-start gap-6 p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+<div class="w-full md:w-1/3 h-48 md:h-auto rounded-lg overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC_G-Gcnv-DdsWC8hCL0tFU8OK45dKxJpqRda6rqoGaSdn2NAylwTIfRjb8H6TRijQ15uneLbfrY6j1pvYaorqr1VA7LJnxhLmNQAxzgDpmPff7yV6dosKvocN2GZ5ZHaQ1qXMPZ1EbZ5qgYwreE-N_MIMQlyPd7J94BSfZYR8eDH-xGH5tdwGNd4t8I3Cgzq6rtyg_krMb2TYLRgH2NDaIkgg4jGTkrJFO_DVjIJ5-uTRzZGqW9DOyU9if5ZwM1U4doSeLBTRcbDQN");'></div>
+</div>
+<div class="flex flex-col gap-2 flex-1">
+<h3 class="text-gray-800 text-xl font-semibold leading-tight">The Future of AI in Software Development</h3>
+<p class="text-gray-600 text-base font-normal leading-relaxed">
+                      Explore how artificial intelligence is reshaping the landscape of software development, from automated testing to code generation.
+                    </p>
+<a class="text-primary-500 hover:text-primary-600 font-medium mt-2 inline-flex items-center group" href="#" style="color: #3d98f4; --hover-color: #2c7bcf;">Read more <span class="material-icons ml-1 transform group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span></a>
+</div>
+</article>
+<article class="flex flex-col md:flex-row items-start gap-6 p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+<div class="w-full md:w-1/3 h-48 md:h-auto rounded-lg overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDt1t2uzmva1Ww6bJ9cca49M8QFzlMU9bprmoMX_-av0pt5tTXBX4bSM9XCedDirG983hwgbt89QSXeyO6s6yRjyJeugY5hZ1WE7d4QtkCHIVyGr-CUkPf0uY3_DfLxfGSyDhdkpTnabtIeAL31u-ixHJ6l6Q_NjnoX6jYwdp868dCAxNeHIiTFht4jMC0Phuz9cAvKlJiU4Bio-a-TZhd4fI7dA8VPkby2efy3rq6Tc90LOLabb5_fhhsNFMkN_pJYZUeuQD0ppRb7");'></div>
+</div>
+<div class="flex flex-col gap-2 flex-1">
+<h3 class="text-gray-800 text-xl font-semibold leading-tight">Mastering React Hooks: A Comprehensive Guide</h3>
+<p class="text-gray-600 text-base font-normal leading-relaxed">
+                      Dive deep into React Hooks, understanding their usage, benefits, and best practices for efficient state management.
+                    </p>
+<a class="text-primary-500 hover:text-primary-600 font-medium mt-2 inline-flex items-center group" href="#" style="color: #3d98f4; --hover-color: #2c7bcf;">Read more <span class="material-icons ml-1 transform group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span></a>
+</div>
+</article>
+<article class="flex flex-col md:flex-row items-start gap-6 p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+<div class="w-full md:w-1/3 h-48 md:h-auto rounded-lg overflow-hidden">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB6_Vrih_YGvww4KLAGLqWY5nl90xQBnREjoc74nWabunjXZJGIXKcTPPb29mYeoQ22Nxp-WGmK7XmEDcmnVufpa0R8RKyQh9DaLFCfUxGR-RVD6oGn2HP6BGKS1jgrhSXW2jomUnuSTHzFIOFpj012FZY9tAoZUC9HpXQ_jCL2n7BpfcKTSNqE0UaSCZwF0cxr9kqszTKl8wmPlzTzpwz2bGXrce2sUk4-Q1-tB_VkTfaeUuaijzioXAqd5HKJBmEdq4FCEfuuw6i1");'></div>
+</div>
+<div class="flex flex-col gap-2 flex-1">
+<h3 class="text-gray-800 text-xl font-semibold leading-tight">Building Scalable Web Applications with Node.js</h3>
+<p class="text-gray-600 text-base font-normal leading-relaxed">
+                      Learn the techniques and strategies for developing scalable web applications using Node.js, focusing on performance and maintainability.
+                    </p>
+<a class="text-primary-500 hover:text-primary-600 font-medium mt-2 inline-flex items-center group" href="#" style="color: #3d98f4; --hover-color: #2c7bcf;">Read more <span class="material-icons ml-1 transform group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span></a>
+</div>
+</article>
+</div>
+</section>
+<section>
+<h2 class="text-gray-800 text-3xl font-bold tracking-tight mb-6">Popular Posts</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<article class="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+<div class="w-full h-48 bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCL7yGGN9pyoxK2j1pzZ5AocEJQzQSy-8GhpO12025I0fMyDkaaA_wggsvlY_Vw0I3kiNBac9XNesWODg4LcPTajlu3KdzoFoCt7yYWMDqsoH6mmL_amaTAmNBwsUVDykR09m-KnjlP4A2FQmr4EwfyqAmHKRbwX1v9cN9tIyu0Bkw44vQD_93aKpXWBWoRR7ELvx8OprpS2W12uuLyPRUehUdlqnW9n3f7A-BRnSa5KhC4fMGxO2uVILYDpOwMra6rf4hDMaI0AoZ9");'></div>
+<div class="p-6 flex flex-col gap-2 flex-1">
+<h3 class="text-gray-800 text-lg font-semibold leading-tight">Demystifying Blockchain Technology</h3>
+<p class="text-gray-600 text-sm font-normal leading-relaxed flex-grow">
+                      An accessible explanation of blockchain technology, its applications beyond cryptocurrency, and its potential impact on various industries.
+                    </p>
+<a class="text-primary-500 hover:text-primary-600 font-medium mt-2 inline-flex items-center group self-start" href="#" style="color: #3d98f4; --hover-color: #2c7bcf;">Read more <span class="material-icons ml-1 transform group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span></a>
+</div>
+</article>
+<article class="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+<div class="w-full h-48 bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBBp1sJR3HDR1bIPgyn4wC0dwBCdjffJHbX2RHUqrR19bs7BC3mjHxcZ9V4VineWbf4vd99x-Pb2DatxvEJNWSheBv4ZQDVEVFSE1RUnjCFs0defSa52Dyy_nmqUbb4jtAIQzELH0b7yponlgvwqkHTv2EKiet6FIKzvszhI6jURLBoZ4z-1ItTR3VGqQ1kaEp6tWpsPL_TRqymE5jr5u1iEg7oLPmXFvpTzmKgyxMhikk8pe8M0udqWweFjlSiBI9uZF2NE8aJhqh8");'></div>
+<div class="p-6 flex flex-col gap-2 flex-1">
+<h3 class="text-gray-800 text-lg font-semibold leading-tight">Introduction to Cloud Computing: Services and Providers</h3>
+<p class="text-gray-600 text-sm font-normal leading-relaxed flex-grow">
+                      A beginner's guide to cloud computing, covering essential services like IaaS, PaaS, and SaaS, and comparing major cloud providers.
+                    </p>
+<a class="text-primary-500 hover:text-primary-600 font-medium mt-2 inline-flex items-center group self-start" href="#" style="color: #3d98f4; --hover-color: #2c7bcf;">Read more <span class="material-icons ml-1 transform group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span></a>
+</div>
+</article>
+<article class="flex flex-col bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+<div class="w-full h-48 bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDMBF_5iGanhW90vrV5SkBKmVe-6t1YuyqCKj6zJpGm-5smvvpinVY_f75qEqwf4Qo2N6ah6wHg0zJOyKooHcQGZ7ztye87Ogw7TImfv6ruEsUeCxVK6poedkJKBE45DsvOIN4jNRXajWPTRuQDPSw5z4VLErs8P0Xo_kq2yG7SMQDgdX9fIHxECtlrNFGOsKulfPO2sKtHSOkW7JJWk9BVfEmGvfrRY7eDhi5I3FCxqv27s60HLPBKjSy6Dowp48zJGqAR1MmR-QLG");'></div>
+<div class="p-6 flex flex-col gap-2 flex-1">
+<h3 class="text-gray-800 text-lg font-semibold leading-tight">Cybersecurity Best Practices for Developers</h3>
+<p class="text-gray-600 text-sm font-normal leading-relaxed flex-grow">
+                      Essential cybersecurity practices that every developer should follow to protect their applications and user data from potential threats.
+                    </p>
+<a class="text-primary-500 hover:text-primary-600 font-medium mt-2 inline-flex items-center group self-start" href="#" style="color: #3d98f4; --hover-color: #2c7bcf;">Read more <span class="material-icons ml-1 transform group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span></a>
+</div>
+</article>
+</div>
+</section>
+<section class="bg-white p-8 rounded-xl shadow-lg">
+<h2 class="text-gray-800 text-3xl font-bold tracking-tight mb-4">About Me</h2>
+<p class="text-gray-700 text-base font-normal leading-relaxed">
+                Hi, I'm Alex, a software engineer passionate about exploring and sharing knowledge on cutting-edge technologies. This blog is a collection of my insights, tutorials, and experiences in the world of software development.
+              </p>
+</section>
+</div>
+</main>
+<footer class="bg-gray-800 text-gray-300 py-8 text-center mt-12">
+<p>© 2024 Tech Tales. All rights reserved.</p>
+<p class="text-sm mt-1">Designed with <span class="text-red-400">♥</span> by You</p>
+</footer>
+</div>
+</div>
+
+</body></html>

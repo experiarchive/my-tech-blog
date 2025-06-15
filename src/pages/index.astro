@@ -1,16 +1,89 @@
 ---
+// src/pages/index.astro
 
+// 1. 필요한 도구들을 불러옵니다.
+import { client } from '../../sanity/client';
+import imageUrlBuilder from '@sanity/image-url';
+import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Sanity 이미지 URL을 만들어주는 헬퍼 함수입니다.
+const builder = imageUrlBuilder(client);
+function urlFor(source: SanityImageSource) {
+	return builder.image(source);
+}
+
+// 2. Sanity에 데이터를 요청하는 '요청서(GROQ 쿼리)'를 작성합니다.
+// "post 타입의 문서를, 발행일 최신순으로 정렬해서, 3개만 가져와줘" 라는 뜻입니다.
+const query = `*[_type == "post"] | order(publishedAt desc)[0...3] {
+	title,
+	"slug": slug.current,
+	mainImage {
+		asset->{
+			_id,
+			url
+		},
+		alt
+	},
+	excerpt
+}`;
+
+// 3. 실제로 Sanity에 데이터를 요청하고 결과를 posts 변수에 저장합니다.
+const posts = await client.fetch(query);
+
+// 만약 데이터가 없으면 빈 배열로 처리합니다.
+if (!posts) {
+	// return new Response(null, {
+	//   status: 404,
+	//   statusText: 'Not found'
+	// });
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<!-- 4. BaseLayout으로 전체 페이지를 감싸줍니다. title을 "Home"으로 설정합니다. -->
+<BaseLayout title="Home | Tech Tales">
+	<!-- main_page_ui.html의 구조를 가져옵니다. -->
+	<div class="px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-8">
+		<div class="layout-content-container flex flex-col max-w-4xl flex-1 gap-12">
+			<section>
+				<h2 class="text-gray-800 text-3xl font-bold tracking-tight mb-6">Latest Posts</h2>
+				<div class="grid grid-cols-1 md:grid-cols-1 gap-8">
+					<!-- 5. Sanity에서 가져온 posts 데이터를 반복해서 화면에 표시합니다. -->
+					{posts && posts.map((post: any) => (
+						<article class="flex flex-col md:flex-row items-start gap-6 p-6 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300">
+							<a href={`/posts/${post.slug}`} class="w-full md:w-1/3 aspect-[4/3] md:aspect-[3/2] rounded-lg overflow-hidden flex-shrink-0">
+								{post.mainImage && post.mainImage.asset && (
+									<img
+										src={post.mainImage.asset.url || urlFor(post.mainImage).width(400).url()}
+										alt={post.mainImage.alt || post.title}
+										class="w-full h-full object-cover"
+									/>
+								)}
+								{(!post.mainImage || !post.mainImage.asset) && (
+									<div class="w-full h-full bg-gray-200 flex items-center justify-center">
+										<span class="text-gray-500">No Image</span>
+									</div>
+								)}
+							</a>
+							<div class="flex flex-col gap-2 flex-1">
+								<h3 class="text-gray-800 text-xl font-semibold leading-tight">
+									<a href={`/posts/${post.slug}`} class="hover:underline">
+										{post.title}
+									</a>
+								</h3>
+								<p class="text-gray-600 text-base font-normal leading-relaxed">
+									{post.excerpt}
+								</p>
+								<a class="text-primary-500 hover:text-primary-600 font-medium mt-2 inline-flex items-center group" href={`/posts/${post.slug}`} style="color: #3d98f4; --hover-color: #2c7bcf;">
+									Read more
+									<span class="material-icons ml-1 transform group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span>
+								</a>
+							</div>
+						</article>
+					))}
+				</div>
+			</section>
+			<!-- "Popular Posts" 와 "About Me" 섹션은 나중에 추가하겠습니다. -->
+		</div>
+	</div>
+</BaseLayout>

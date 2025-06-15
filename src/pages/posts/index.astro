@@ -1,0 +1,66 @@
+---
+// src/pages/posts/index.astro
+
+import { client, formatDate } from '../../../sanity/client'; // 우리가 만든 클라이언트와 날짜 함수 불러오기
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// 모든 post를 최신순으로 가져오는 쿼리 (생성일도 함께 가져오기)
+const query = `*[_type == "post"] | order(publishedAt desc) {
+  title,
+  "slug": slug.current,
+  publishedAt,
+  _createdAt,
+  excerpt
+}`;
+
+const posts = await client.fetch(query);
+
+// 디버깅을 위한 로그
+console.log('Posts with dates:', posts?.map((post: any) => ({
+  title: post.title,
+  publishedAt: post.publishedAt,
+  _createdAt: post._createdAt
+})));
+
+if (!posts) {
+  // return new Response(null, {
+  //   status: 404,
+  //   statusText: 'Not found'
+  // });
+}
+---
+
+<BaseLayout title="All Posts | Tech Tales">
+  <main class="px-10 sm:px-20 md:px-32 lg:px-40 flex flex-1 justify-center py-8 bg-gray-50">
+    <div class="layout-content-container flex flex-col max-w-4xl flex-1">
+      <div class="flex flex-wrap justify-between items-center gap-4 p-6 border-b border-gray-200 bg-white rounded-t-xl shadow-sm">
+        <h1 class="text-gray-800 text-4xl font-bold tracking-tight">All Posts</h1>
+      </div>
+      <div class="space-y-6 py-6">
+        <!-- Sanity에서 가져온 posts 데이터를 반복해서 목록으로 표시 -->
+        {posts.map((post: any) => (
+          <article class="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+            <div class="p-6 sm:p-8">
+              <h3 class="text-2xl font-semibold text-gray-800 mb-2 transition-colors">
+                <a href={`/posts/${post.slug}`} class="hover:underline">
+                  {post.title}
+                </a>
+              </h3>
+              <p class="text-sm text-gray-500 mb-1">
+                Published on {formatDate(post.publishedAt || post._createdAt)}
+              </p>
+              <p class="text-gray-600 text-base leading-relaxed mb-4">
+                {post.excerpt}
+              </p>
+              <a class="inline-flex items-center text-base font-medium text-[#3d98f4] hover:text-blue-700 transition-colors group" href={`/posts/${post.slug}`}>
+                Read More
+                <span class="material-icons ml-1 group-hover:translate-x-1 transition-transform duration-200">arrow_forward</span>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <!-- 페이지네이션(페이지 번호)은 나중에 추가하겠습니다. -->
+    </div>
+  </main>
+</BaseLayout> 

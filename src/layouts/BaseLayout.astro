@@ -1,0 +1,35 @@
+---
+// 컴포넌트를 불러옵니다.
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+	title: string;
+}
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="ko">
+	<head>
+		<!-- head 내용은 동일 -->
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Newsreader:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+	</head>
+	<body class="bg-gray-50" style='font-family: Newsreader, "Noto Sans", sans-serif;'>
+		<div class="relative flex size-full min-h-screen flex-col">
+			<Header /> <!-- Header 컴포넌트 추가 -->
+			<main class="flex-grow">
+				<slot /> <!-- 다른 페이지의 내용이 이 부분에 들어옵니다. -->
+			</main>
+			<Footer /> <!-- Footer 컴포넌트 추가 -->
+		</div>
+	</body>
+</html> 
