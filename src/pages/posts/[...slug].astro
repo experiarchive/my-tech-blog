@@ -54,18 +54,18 @@ const bodyHtml = toHTML(post.body || [], {
       h3: ({children}: any) => `<h3 class="text-xl font-semibold text-slate-800 mt-5 mb-2">${children}</h3>`,
       h4: ({children}: any) => `<h4 class="text-lg font-medium text-slate-800 mt-4 mb-2">${children}</h4>`,
       // 일반 텍스트 블록
-      normal: ({children}: any) => `<p class="mb-4 leading-relaxed">${children}</p>`,
+      normal: ({children}: any) => `<p class="mb-6 leading-loose text-base sm:text-lg">${children}</p>`,
     },
     list: {
       // 불릿 포인트 리스트
-      bullet: ({children}: any) => `<ul class="list-disc list-inside mb-4 space-y-2 ml-4">${children}</ul>`,
+      bullet: ({children}: any) => `<ul class="list-disc list-inside mb-6 space-y-3 ml-4 text-base sm:text-lg">${children}</ul>`,
       // 번호 리스트
-      number: ({children}: any) => `<ol class="list-decimal list-inside mb-4 space-y-2 ml-4">${children}</ol>`,
+      number: ({children}: any) => `<ol class="list-decimal list-inside mb-6 space-y-3 ml-4 text-base sm:text-lg">${children}</ol>`,
     },
     listItem: {
       // 리스트 아이템
-      bullet: ({children}: any) => `<li class="leading-relaxed">${children}</li>`,
-      number: ({children}: any) => `<li class="leading-relaxed">${children}</li>`,
+      bullet: ({children}: any) => `<li class="leading-loose">${children}</li>`,
+      number: ({children}: any) => `<li class="leading-loose">${children}</li>`,
     },
     marks: {
       // 강조 텍스트
@@ -117,7 +117,7 @@ const bodyHtml = toHTML(post.body || [], {
           </div>
 
           <!-- 포스트 본문 -->
-          <div class="prose prose-lg prose-slate max-w-none text-slate-700 leading-relaxed" set:html={bodyHtml} />
+          <div class="prose prose-lg prose-slate max-w-none text-slate-700 leading-loose" set:html={bodyHtml} />
         </div>
       </article>
       <!-- "Related Articles" 섹션은 나중에 추가하겠습니다. -->
