@@ -2,16 +2,8 @@
 // src/pages/index.astro
 
 // 1. 필요한 도구들을 불러옵니다.
-import { client } from '../../sanity/client';
-import imageUrlBuilder from '@sanity/image-url';
-import type { SanityImageSource } from '@sanity/image-url/lib/types/types';
+import { client, getImageUrl } from '../../sanity/client';
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-// Sanity 이미지 URL을 만들어주는 헬퍼 함수입니다.
-const builder = imageUrlBuilder(client);
-function urlFor(source: SanityImageSource) {
-	return builder.image(source);
-}
 
 // 2. Sanity에 데이터를 요청하는 '요청서(GROQ 쿼리)'를 작성합니다.
 // "post 타입의 문서를, 발행일 최신순으로 정렬해서, 3개만 가져와줘" 라는 뜻입니다.
@@ -54,7 +46,7 @@ if (!posts) {
 							<a href={`/posts/${post.slug}`} class="w-full md:w-1/3 aspect-[4/3] md:aspect-[3/2] rounded-lg overflow-hidden flex-shrink-0">
 								{post.mainImage && post.mainImage.asset && (
 									<img
-										src={post.mainImage.asset.url || urlFor(post.mainImage).width(400).url()}
+										src={post.mainImage.asset.url || getImageUrl(post.mainImage.asset, { width: 400 })}
 										alt={post.mainImage.alt || post.title}
 										class="w-full h-full object-cover"
 									/>

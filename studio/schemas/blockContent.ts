@@ -41,6 +41,19 @@ export default defineType({
     defineArrayMember({
       type: 'image',
       options: {hotspot: true},
+      fields: [
+        {
+          name: 'alt',
+          type: 'string',
+          title: 'Alternative Text',
+          description: 'Important for SEO and accessibility',
+        },
+        {
+          name: 'caption',
+          type: 'string',
+          title: 'Caption',
+        },
+      ],
     }),
     defineArrayMember({
       type: 'table',

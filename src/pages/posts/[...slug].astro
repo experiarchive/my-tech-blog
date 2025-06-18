@@ -2,8 +2,7 @@
 // src/pages/posts/[...slug].astro
 
 import { toHTML } from '@portabletext/to-html';
-import imageUrlBuilder from '@sanity/image-url';
-import { client, formatDate } from '../../../sanity/client'; // client와 formatDate 둘 다 불러오기
+import { client, formatDate, getImageUrl } from '../../../sanity/client'; // 새로운 이미지 함수 추가
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 // --- Astro의 동적 페이지 생성 기능 ---
@@ -38,11 +37,7 @@ if (!post) {
 }
 
 // --- Sanity 데이터 처리 ---
-// Sanity 이미지 URL을 만들어주는 헬퍼 함수
-const builder = imageUrlBuilder(client);
-function urlFor(source: any) {
-  return builder.image(source);
-}
+// 쿠키 없는 이미지 URL 생성 함수 사용
 
 // 본문(Portable Text)을 HTML로 변환합니다.
 const bodyHtml = toHTML(post.body || [], {
@@ -75,6 +70,27 @@ const bodyHtml = toHTML(post.body || [], {
       link: ({children, value}: any) => `<a href="${value.href}" class="text-[#3d98f4] hover:underline" target="_blank" rel="noopener noreferrer">${children}</a>`,
     },
     types: {
+      // 이미지 렌더링 (쿠키 없는 방식)
+      image: ({value}: any) => {
+        if (!value || !value.asset) return '';
+        
+        const imageUrl = getImageUrl(value.asset, { width: 800 });
+        const alt = value.alt || 'Image';
+        const caption = value.caption;
+        
+        return `
+          <figure class="my-8">
+            <img 
+              src="${imageUrl}" 
+              alt="${alt}" 
+              class="w-full h-auto rounded-lg shadow-md"
+              loading="lazy"
+            />
+            ${caption ? `<figcaption class="text-center text-sm text-gray-600 mt-2 italic">${caption}</figcaption>` : 
+              (value.alt ? `<figcaption class="text-center text-sm text-gray-600 mt-2 italic">${value.alt}</figcaption>` : '')}
+          </figure>
+        `;
+      },
       // 표 렌더링
       table: ({value}: any) => {
         const {rows} = value;
@@ -128,7 +144,7 @@ const bodyHtml = toHTML(post.body || [], {
         {post.mainImage && (
           <img
             class="w-full h-auto object-cover max-h-96"
-            src={urlFor(post.mainImage).width(800).url()}
+            src={getImageUrl(post.mainImage.asset, { width: 800 })}
             alt={post.title}
           />
         )}
