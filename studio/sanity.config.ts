@@ -1,6 +1,7 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
+import {table} from '@sanity/table'
 import post from './schemas/post'
 import category from './schemas/category'
 import blockContent from './schemas/blockContent'
@@ -12,7 +13,7 @@ export default defineConfig({
   projectId: 'pjt88hjd',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool(), visionTool(), table()],
 
   schema: {
     types: [post, category, blockContent],

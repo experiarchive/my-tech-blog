@@ -73,6 +73,39 @@ const bodyHtml = toHTML(post.body || [], {
       em: ({children}: any) => `<em class="italic">${children}</em>`,
       // 링크
       link: ({children, value}: any) => `<a href="${value.href}" class="text-[#3d98f4] hover:underline" target="_blank" rel="noopener noreferrer">${children}</a>`,
+    },
+    types: {
+      // 표 렌더링
+      table: ({value}: any) => {
+        const {rows} = value;
+        if (!rows || rows.length === 0) return '';
+        
+        const headerRow = rows[0];
+        const bodyRows = rows.slice(1);
+        
+        return `
+          <div class="overflow-x-auto my-6">
+            <table class="min-w-full border-collapse border border-gray-300">
+              <thead class="bg-gray-50">
+                <tr>
+                  ${headerRow.cells.map((cell: any) => 
+                    `<th class="border border-gray-300 px-4 py-2 text-left font-semibold text-gray-900">${cell || ''}</th>`
+                  ).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${bodyRows.map((row: any) => `
+                  <tr class="hover:bg-gray-50">
+                    ${row.cells.map((cell: any) => 
+                      `<td class="border border-gray-300 px-4 py-2 text-gray-700">${cell || ''}</td>`
+                    ).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
     }
   }
 });
