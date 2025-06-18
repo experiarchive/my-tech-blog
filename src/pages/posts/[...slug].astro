@@ -58,9 +58,9 @@ const bodyHtml = toHTML(post.body || [], {
     },
     list: {
       // 불릿 포인트 리스트
-      bullet: ({children}: any) => `<ul class="list-disc list-inside mb-6 space-y-3 ml-4 text-base sm:text-lg">${children}</ul>`,
+      bullet: ({children}: any) => `<ul class="list-disc list-inside mb-6 space-y-1 ml-4 text-base sm:text-lg">${children}</ul>`,
       // 번호 리스트
-      number: ({children}: any) => `<ol class="list-decimal list-inside mb-6 space-y-3 ml-4 text-base sm:text-lg">${children}</ol>`,
+      number: ({children}: any) => `<ol class="list-decimal list-inside mb-6 space-y-1 ml-4 text-base sm:text-lg">${children}</ol>`,
     },
     listItem: {
       // 리스트 아이템
