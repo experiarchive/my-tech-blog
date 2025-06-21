@@ -185,6 +185,8 @@ const bodyHtml = toHTML(post.body || [], {
               height={post.mainImage.asset.dimensions.height}
               format="webp"
               alt={post.mainImage.alt || post.title}
+              loading="eager"
+              fetchpriority="high"
             />
           </div>
         )}
