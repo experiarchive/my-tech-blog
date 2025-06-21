@@ -5,6 +5,7 @@ import { toHTML } from '@portabletext/to-html';
 import { client, formatDate, getImageUrl } from '../../../sanity/client'; // 새로운 이미지 함수 추가
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
+import Adsense from '../../components/Adsense.astro';
 
 // --- Astro의 동적 페이지 생성 기능 ---
 // 1. 어떤 페이지들을 만들어야 하는지 목록을 생성합니다.
@@ -213,7 +214,17 @@ const bodyHtml = toHTML(post.body || [], {
           </div>
         )}
 
+        <!-- 본문 상단 광고 -->
+        <div class="my-8 flex justify-center">
+          <Adsense slot="7490974568" />
+        </div>
+
         <div class="prose prose-lg max-w-none dark:prose-invert" set:html={bodyHtml} />
+
+        <!-- 본문 하단 광고 -->
+        <div class="my-8 flex justify-center">
+          <Adsense slot="6038840839" />
+        </div>
       </div>
     </article>
   </div>
