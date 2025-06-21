@@ -29,3 +29,13 @@
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
 }
+
+body {
+    background-color: #fff; /* 라이트 모드 기본 배경색 */
+    color: #1f2937; /* 라이트 모드 기본 글자색 */
+}
+
+.dark body {
+    background-color: #111827; /* 다크 모드 기본 배경색 */
+    color: #e5e7eb; /* 다크 모드 기본 글자색 */
+}
