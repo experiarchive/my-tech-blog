@@ -179,7 +179,7 @@ const bodyHtml = toHTML(post.body || [], {
         {post.mainImage && post.mainImage.asset && (
           <div class="my-8">
             <Image
-              class="w-full h-auto rounded-lg shadow-md"
+              class="w-full max-h-[500px] object-cover rounded-lg shadow-md"
               src={post.mainImage.asset.url}
               width={post.mainImage.asset.dimensions.width}
               height={post.mainImage.asset.dimensions.height}
