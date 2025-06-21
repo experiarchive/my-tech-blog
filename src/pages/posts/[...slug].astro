@@ -4,6 +4,7 @@
 import { toHTML } from '@portabletext/to-html';
 import { client, formatDate, getImageUrl } from '../../../sanity/client'; // 새로운 이미지 함수 추가
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
 
 // --- Astro의 동적 페이지 생성 기능 ---
 // 1. 어떤 페이지들을 만들어야 하는지 목록을 생성합니다.
@@ -23,7 +24,14 @@ const { slug } = Astro.params;
 const query = `*[_type == "post" && slug.current == $slug][0] {
   title,
   publishedAt,
-  mainImage,
+  "mainImage": mainImage {
+    asset->{
+      _id,
+      url,
+      "dimensions": metadata.dimensions
+    },
+    alt
+  },
   body,
   excerpt,
   "category": categories[0]->title
@@ -157,10 +165,13 @@ const bodyHtml = toHTML(post.body || [], {
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
       {post.mainImage && post.mainImage.asset && (
-        <img 
-          class="w-full max-h-96 object-cover" 
-          src={getImageUrl(post.mainImage.asset, { width: 800 })} 
-          alt={post.mainImage.alt || post.title} 
+        <Image
+          class="w-full max-h-96 object-cover"
+          src={post.mainImage.asset.url}
+          width={post.mainImage.asset.dimensions.width}
+          height={post.mainImage.asset.dimensions.height}
+          format="webp"
+          alt={post.mainImage.alt || post.title}
         />
       )}
       <div class="p-6 sm:p-8 lg:p-10">
