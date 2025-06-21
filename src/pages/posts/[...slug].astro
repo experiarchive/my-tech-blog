@@ -23,11 +23,10 @@ const { slug } = Astro.params;
 const query = `*[_type == "post" && slug.current == $slug][0] {
   title,
   publishedAt,
-  _createdAt,
   mainImage,
   body,
-  "category": categories[0]->title, // 첫 번째 카테고리의 제목만 가져옵니다.
-  excerpt
+  excerpt,
+  "category": categories[0]->title
 }`;
 
 const post = await client.fetch(query, { slug });
@@ -37,6 +36,22 @@ if (!post) {
   return Astro.redirect('/404');
 }
 
+// 1. Slugify 함수 및 headings 배열 추가
+const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+const headings: {level: number, text: string, slug: string}[] = [];
+
+// Helper function to convert portable text spans to plain text
+const toPlainText = (blocks: any[] = []) => {
+    return blocks
+        .map(block => {
+            if (block._type === 'span' && block.text) {
+                return block.text;
+            }
+            return '';
+        })
+        .join('');
+};
+
 // --- Sanity 데이터 처리 ---
 // 쿠키 없는 이미지 URL 생성 함수 사용
 
@@ -44,10 +59,20 @@ if (!post) {
 const bodyHtml = toHTML(post.body || [], {
   components: {
     block: {
-      // 헤딩 스타일 정의
+      // 2. Heading 컴포넌트 수정 (ID 추가 및 headings 배열에 push)
       h1: ({children}: any) => `<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`,
-      h2: ({children}: any) => `<h2 class="mt-6 mb-3 border-l-4 border-[#3d98f4] pl-4 text-2xl font-semibold text-slate-800 dark:text-gray-200">${children}</h2>`,
-      h3: ({children}: any) => `<h3 class="mt-5 mb-2 border-l-2 border-gray-300 dark:border-gray-600 pl-3 text-xl font-semibold text-slate-800 dark:text-gray-300">${children}</h3>`,
+      h2: ({children, value}: any) => {
+        const text = toPlainText(value.children);
+        const slug = slugify(text);
+        headings.push({ level: 2, text: text, slug });
+        return `<h2 id="${slug}" class="mt-6 mb-3 border-l-4 border-[#3d98f4] pl-4 text-2xl font-semibold text-slate-800 dark:text-gray-200">${children}</h2>`;
+      },
+      h3: ({children, value}: any) => {
+        const text = toPlainText(value.children);
+        const slug = slugify(text);
+        headings.push({ level: 3, text: text, slug });
+        return `<h3 id="${slug}" class="mt-5 mb-2 border-l-2 border-gray-300 dark:border-gray-600 pl-3 text-xl font-semibold text-slate-800 dark:text-gray-300">${children}</h3>`;
+      },
       h4: ({children}: any) => `<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`,
       // 일반 텍스트 블록
       normal: ({children}: any) => `<p class="mb-6 leading-loose text-base sm:text-lg">${children}</p>`,
@@ -130,20 +155,50 @@ const bodyHtml = toHTML(post.body || [], {
 
 <BaseLayout title={post.title} description={post.excerpt}>
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <article>
+    <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
       {post.mainImage && post.mainImage.asset && (
         <img 
-          class="w-full max-h-96 object-cover rounded-lg mb-8" 
+          class="w-full max-h-96 object-cover" 
           src={getImageUrl(post.mainImage.asset, { width: 800 })} 
           alt={post.mainImage.alt || post.title} 
         />
       )}
-      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">{post.title}</h1>
-      <p class="text-lg text-gray-500 dark:text-gray-400 mb-8">
-        Published on {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-      </p>
-      
-      <div class="prose prose-lg max-w-none dark:prose-invert" set:html={bodyHtml} />
+      <div class="p-6 sm:p-8 lg:p-10">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">{post.title}</h1>
+        <div class="flex items-center text-base text-gray-500 dark:text-gray-400 mb-8">
+          <span>Published on {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          {post.category && (
+            <>
+              <span class="mx-2">·</span>
+              <span>{post.category}</span>
+            </>
+          )}
+        </div>
+        
+        <!-- 3. 목차(TOC) 컴포넌트 추가 -->
+        {headings.length > 0 && (
+          <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border dark:border-gray-700">
+            <h2 class="text-xl font-bold mb-3 dark:text-white">On this page</h2>
+            <ul class="space-y-2">
+              {headings.map((heading) => (
+                <li class:list={[
+                  'font-medium',
+                  { 'ml-4': heading.level === 3 }
+                ]}>
+                  <a 
+                    href={`#${heading.slug}`} 
+                    class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="prose prose-lg max-w-none dark:prose-invert" set:html={bodyHtml} />
+      </div>
     </article>
   </div>
 </BaseLayout> 
