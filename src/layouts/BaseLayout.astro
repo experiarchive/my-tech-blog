@@ -10,6 +10,7 @@ export interface Props {
 }
 
 const { title, description = 'My personal tech blog' } = Astro.props;
+const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 ---
 <!doctype html>
 <html lang="ko">
@@ -21,6 +22,10 @@ const { title, description = 'My personal tech blog' } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+
+		<!-- Google Adsense -->
+		{adClient && <script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`} crossorigin="anonymous"></script>}
+
 		<script is:inline>
 			// 다크 모드 깜빡임 방지 스크립트
 			const theme = (() => {
@@ -43,8 +48,6 @@ const { title, description = 'My personal tech blog' } = Astro.props;
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Newsreader:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900" />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3422333183715059"
-     crossorigin="anonymous"></script>
 	</head>
 	<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200" style='font-family: Newsreader, "Noto Sans", sans-serif;'>
 		<div class="relative flex size-full min-h-screen flex-col">

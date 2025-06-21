@@ -30,6 +30,11 @@
   margin-bottom: 0.25rem;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem; /* 헤더 높이만큼 여백 추가 */
+}
+
 body {
     background-color: #fff; /* 라이트 모드 기본 배경색 */
     color: #1f2937; /* 라이트 모드 기본 글자색 */

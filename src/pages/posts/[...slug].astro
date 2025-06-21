@@ -45,9 +45,22 @@ if (!post) {
   return Astro.redirect('/404');
 }
 
-// 1. Slugify 함수 및 headings 배열 추가
+// 1. Slugify 함수 및 headings 배열 추가, 중복 ID 방지 로직 추가
 const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 const headings: {level: number, text: string, slug: string}[] = [];
+const generatedSlugs = new Set<string>();
+
+const createUniqueSlug = (text: string) => {
+  let slug = slugify(text);
+  let uniqueSlug = slug;
+  let counter = 2;
+  while (generatedSlugs.has(uniqueSlug)) {
+    uniqueSlug = `${slug}-${counter}`;
+    counter++;
+  }
+  generatedSlugs.add(uniqueSlug);
+  return uniqueSlug;
+};
 
 // Helper function to convert portable text spans to plain text
 const toPlainText = (blocks: any[] = []) => {
@@ -72,13 +85,13 @@ const bodyHtml = toHTML(post.body || [], {
       h1: ({children}: any) => `<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`,
       h2: ({children, value}: any) => {
         const text = toPlainText(value.children);
-        const slug = slugify(text);
+        const slug = createUniqueSlug(text);
         headings.push({ level: 2, text: text, slug });
         return `<h2 id="${slug}" class="mt-6 mb-3 border-l-4 border-[#3d98f4] pl-4 text-2xl font-semibold text-slate-800 dark:text-gray-200">${children}</h2>`;
       },
       h3: ({children, value}: any) => {
         const text = toPlainText(value.children);
-        const slug = slugify(text);
+        const slug = createUniqueSlug(text);
         headings.push({ level: 3, text: text, slug });
         return `<h3 id="${slug}" class="mt-5 mb-2 border-l-2 border-gray-300 dark:border-gray-600 pl-3 text-xl font-semibold text-slate-800 dark:text-gray-300">${children}</h3>`;
       },
@@ -204,7 +217,7 @@ const bodyHtml = toHTML(post.body || [], {
                 ]}>
                   <a 
                     href={`#${heading.slug}`} 
-                    class="text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+                    class="toc-link text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
                   >
                     {heading.text}
                   </a>
@@ -228,4 +241,37 @@ const bodyHtml = toHTML(post.body || [], {
       </div>
     </article>
   </div>
-</BaseLayout> 
+</BaseLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 모든 목차 링크를 선택합니다.
+    const tocLinks = document.querySelectorAll('.toc-link');
+
+    // 링크가 없으면 아무 작업도 하지 않습니다.
+    if (!tocLinks.length) return;
+
+    // 각 링크에 클릭 이벤트 리스너를 추가합니다.
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        // 링크의 기본 동작(페이지 이동 및 기록 추가)을 막습니다.
+        event.preventDefault();
+
+        // href 속성에서 #을 제외한 ID 값을 가져옵니다.
+        const targetId = (link as HTMLAnchorElement).getAttribute('href')?.substring(1);
+        if (!targetId) return;
+
+        // 해당 ID를 가진 요소를 찾습니다.
+        const targetElement = document.getElementById(targetId);
+
+        // 요소가 존재하면, 해당 위치로 부드럽게 스크롤합니다.
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  });
+</script> 
