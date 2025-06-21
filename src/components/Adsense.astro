@@ -1,0 +1,19 @@
+// src/components/Adsense.astro
+interface Props {
+  slot: string; // 광고 단위 슬롯 ID
+  format?: string; // 광고 형식 (선택 사항)
+}
+const { slot, format = 'auto' } = Astro.props;
+
+const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
+---
+
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client={adClient}
+     data-ad-slot={slot}
+     data-ad-format={format}
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script> 
