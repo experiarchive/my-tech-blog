@@ -106,13 +106,13 @@ const bodyHtml = toHTML(post.body || [], {
       },
       h4: ({children}: any) => `<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`,
       // 일반 텍스트 블록
-      normal: ({children}: any) => `<p class="mb-6 leading-loose text-base sm:text-lg">${children}</p>`,
+      normal: ({children}: any) => `<p class="mb-6 leading-loose text-[17px] sm:text-lg">${children}</p>`,
     },
     list: {
       // 불릿 포인트 리스트
-      bullet: ({children}: any) => `<ul class="list-disc list-inside mb-6 space-y-1 ml-4 text-base sm:text-lg">${children}</ul>`,
+      bullet: ({children}: any) => `<ul class="list-disc list-inside mb-6 space-y-1 ml-4 text-[17px] sm:text-lg">${children}</ul>`,
       // 번호 리스트
-      number: ({children}: any) => `<ol class="list-decimal list-inside mb-6 space-y-1 ml-4 text-base sm:text-lg">${children}</ol>`,
+      number: ({children}: any) => `<ol class="list-decimal list-inside mb-6 space-y-1 ml-4 text-[17px] sm:text-lg">${children}</ol>`,
     },
     listItem: {
       // 리스트 아이템
