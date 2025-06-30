@@ -85,7 +85,7 @@ const toPlainText = (blocks: any[] = []) => {
 const bodyHtml = toHTML(post.body || [], {
   components: {
     block: {
-      // 2. Heading 컴포넌트 수정 (계층형 넘버링 추가)
+      // 2. Heading 컴포넌트 수정 (그라데이션 배경 스타일 적용)
       h1: ({children}: any) => `<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`,
       h2: ({children, value}: any) => {
         h2Counter++;
@@ -94,7 +94,7 @@ const bodyHtml = toHTML(post.body || [], {
         const slug = createUniqueSlug(text);
         const number = `${h2Counter}.`;
         headings.push({ level: 2, text, slug, number });
-        return `<h2 id="${slug}" class="mt-6 mb-3 border-l-4 border-[#3d98f4] pl-4 text-2xl font-semibold text-slate-800 dark:text-gray-200">${children}</h2>`;
+        return `<h2 id="${slug}" class="scroll-mt-24 text-2xl font-semibold text-slate-800 dark:text-slate-100 bg-gradient-to-r from-sky-100 to-indigo-100 dark:from-sky-900/70 dark:to-indigo-900/70 rounded-lg px-4 py-3 mt-12 mb-6">${children}</h2>`;
       },
       h3: ({children, value}: any) => {
         h3Counter++;
