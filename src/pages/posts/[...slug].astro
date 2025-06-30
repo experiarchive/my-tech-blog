@@ -45,9 +45,13 @@ if (!post) {
   return Astro.redirect('/404');
 }
 
-// 1. Slugify 함수 및 headings 배열 추가, 중복 ID 방지 로직 추가
+// 1. Slugify 함수 및 headings 배열, 카운터 추가
 const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-const headings: {level: number, text: string, slug: string}[] = [];
+
+const headings: {level: number, text: string, slug: string, number: string}[] = [];
+let h2Counter = 0;
+let h3Counter = 0;
+
 const generatedSlugs = new Set<string>();
 
 const createUniqueSlug = (text: string) => {
@@ -81,18 +85,23 @@ const toPlainText = (blocks: any[] = []) => {
 const bodyHtml = toHTML(post.body || [], {
   components: {
     block: {
-      // 2. Heading 컴포넌트 수정 (ID 추가 및 headings 배열에 push)
+      // 2. Heading 컴포넌트 수정 (계층형 넘버링 추가)
       h1: ({children}: any) => `<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`,
       h2: ({children, value}: any) => {
+        h2Counter++;
+        h3Counter = 0; // h2를 만나면 h3 카운터 초기화
         const text = toPlainText(value.children);
         const slug = createUniqueSlug(text);
-        headings.push({ level: 2, text: text, slug });
+        const number = `${h2Counter}.`;
+        headings.push({ level: 2, text, slug, number });
         return `<h2 id="${slug}" class="mt-6 mb-3 border-l-4 border-[#3d98f4] pl-4 text-2xl font-semibold text-slate-800 dark:text-gray-200">${children}</h2>`;
       },
       h3: ({children, value}: any) => {
+        h3Counter++;
         const text = toPlainText(value.children);
         const slug = createUniqueSlug(text);
-        headings.push({ level: 3, text: text, slug });
+        const number = `${h2Counter}.${h3Counter}.`;
+        headings.push({ level: 3, text, slug, number });
         return `<h3 id="${slug}" class="mt-5 mb-2 border-l-2 border-gray-300 dark:border-gray-600 pl-3 text-xl font-semibold text-slate-800 dark:text-gray-300">${children}</h3>`;
       },
       h4: ({children}: any) => `<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`,
@@ -176,9 +185,9 @@ const bodyHtml = toHTML(post.body || [], {
 ---
 
 <BaseLayout title={post.title} description={post.excerpt}>
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-      <div class="p-6 sm:p-8 lg:p-10">
+      <div class="p-4">
         <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">{post.title}</h1>
         <div class="flex items-center text-base text-gray-500 dark:text-gray-400 mb-8">
           <span>Published on {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
@@ -205,7 +214,7 @@ const bodyHtml = toHTML(post.body || [], {
           </div>
         )}
         
-        <!-- 3. 목차(TOC) 컴포넌트 추가 -->
+        <!-- 3. 목차(TOC) 컴포넌트 수정 (넘버링 표시) -->
         {headings.length > 0 && (
           <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border dark:border-gray-700">
             <h2 class="text-xl font-bold mb-3 dark:text-white">On this page</h2>
@@ -213,13 +222,14 @@ const bodyHtml = toHTML(post.body || [], {
               {headings.map((heading) => (
                 <li class:list={[
                   'font-medium',
-                  { 'ml-4': heading.level === 3 }
+                  { 'ml-7': heading.level === 3 }
                 ]}>
                   <a 
                     href={`#${heading.slug}`} 
-                    class="toc-link text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+                    class="toc-link flex items-start text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
                   >
-                    {heading.text}
+                    <span class="mr-2 text-gray-500 dark:text-gray-400 w-5 text-right shrink-0">{heading.number}</span>
+                    <span class="flex-1">{heading.text}</span>
                   </a>
                 </li>
               ))}
