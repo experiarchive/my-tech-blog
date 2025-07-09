@@ -206,9 +206,9 @@ sections.push(currentSection);
 
 ---
 <BaseLayout title={post.title} description={post.excerpt}>
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 py-12">
     <article class="bg-transparent">
-      <div class="p-4 sm:p-6 md:p-8">
+      <div class="py-4 sm:p-6 md:p-8">
         <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">{post.title}</h1>
         <div class="flex items-center text-base text-gray-500 dark:text-gray-400 mb-8">
           <span>Published on {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
