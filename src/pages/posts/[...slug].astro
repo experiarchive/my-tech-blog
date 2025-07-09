@@ -66,7 +66,6 @@ const createUniqueSlug = (text: string) => {
   return uniqueSlug;
 };
 
-// Helper function to convert portable text spans to plain text
 const toPlainText = (blocks: any[] = []) => {
     return blocks
         .map(block => {
@@ -78,117 +77,139 @@ const toPlainText = (blocks: any[] = []) => {
         .join('');
 };
 
-// --- Sanity 데이터 처리 ---
-// 쿠키 없는 이미지 URL 생성 함수 사용
+// --- 본문 콘텐츠를 프롤로그와 섹션으로 그룹화하는 로직 ---
+const sections: { title: string | null; id: string; content: string[] }[] = [];
+// 첫 섹션을 미리 만들어 둠 (h2 이전의 프롤로그 콘텐츠용)
+let currentSection: { title: string | null; id: string; content: string[] } = {
+  title: null, 
+  id: 'prologue',
+  content: []
+};
 
-// 본문(Portable Text)을 HTML로 변환합니다.
-const bodyHtml = toHTML(post.body || [], {
-  components: {
-    block: {
-      // 2. Heading 컴포넌트 수정 (그라데이션 배경 스타일 적용)
-      h1: ({children}: any) => `<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`,
-      h2: ({children, value}: any) => {
-        h2Counter++;
-        h3Counter = 0; // h2를 만나면 h3 카운터 초기화
-        const text = toPlainText(value.children);
-        const slug = createUniqueSlug(text);
-        const number = `${h2Counter}.`;
-        headings.push({ level: 2, text, slug, number });
-        return `<h2 id="${slug}" class="scroll-mt-24 text-2xl font-semibold text-slate-800 dark:text-slate-100 bg-gradient-to-r from-sky-100 to-indigo-100 dark:from-sky-900/70 dark:to-indigo-900/70 rounded-lg px-4 py-3 mt-12 mb-6">${children}</h2>`;
-      },
-      h3: ({children, value}: any) => {
-        h3Counter++;
-        const text = toPlainText(value.children);
-        const slug = createUniqueSlug(text);
-        const number = `${h2Counter}.${h3Counter}.`;
-        headings.push({ level: 3, text, slug, number });
-        return `<h3 id="${slug}" class="mt-5 mb-2 border-l-2 border-gray-300 dark:border-gray-600 pl-3 text-xl font-semibold text-slate-800 dark:text-gray-300">${children}</h3>`;
-      },
-      h4: ({children}: any) => `<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`,
-      // 일반 텍스트 블록
-      normal: ({children}: any) => `<p class="mb-6 leading-loose text-[17px] sm:text-lg">${children}</p>`,
+const components = {
+  block: {
+    h2: ({ children, value }: any) => {
+      // h2를 만나면, 현재까지의 섹션(프롤로그 또는 이전 h2섹션)을 배열에 푸시합니다.
+      sections.push(currentSection);
+
+      // h2 정보로 새 섹션을 시작합니다.
+      const text = toPlainText(value.children);
+      const slug = createUniqueSlug(text);
+      h2Counter++;
+      h3Counter = 0;
+      const number = `${h2Counter}.`;
+      headings.push({ level: 2, text, slug, number });
+      
+      currentSection = {
+        title: children, // HTML이 포함된 제목
+        id: slug,
+        content: []
+      };
+      
+      return ''; // h2 자체는 렌더링하지 않습니다.
     },
-    list: {
-      // 불릿 포인트 리스트
-      bullet: ({children}: any) => `<ul class="list-disc list-inside mb-6 space-y-1 ml-4 text-[17px] sm:text-lg">${children}</ul>`,
-      // 번호 리스트
-      number: ({children}: any) => `<ol class="list-decimal list-inside mb-6 space-y-1 ml-4 text-[17px] sm:text-lg">${children}</ol>`,
+    h3: ({ children, value }: any) => {
+      h3Counter++;
+      const text = toPlainText(value.children);
+      const slug = createUniqueSlug(text);
+      const number = '–'; // H3 기호를 대시로 변경
+      headings.push({ level: 3, text, slug, number });
+
+      // 본문 H3에서는 기호를 제거하고, 대신 왼쪽에 세로선을 추가합니다.
+      const h3Html = `<h3 id="${slug}" class="scroll-mt-24 mt-10 mb-4 text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100 border-l-4 border-sky-500/30 pl-4">${children}</h3>`;
+      currentSection.content.push(h3Html);
+      return '';
     },
-    listItem: {
-      // 리스트 아이템
-      bullet: ({children}: any) => `<li class="leading-loose">${children}</li>`,
-      number: ({children}: any) => `<li class="leading-loose">${children}</li>`,
+    normal: ({ children }: any) => {
+      currentSection.content.push(`<p class="mb-6 leading-loose text-slate-700 dark:text-slate-300 text-[17px] sm:text-lg">${children}</p>`);
+      return '';
     },
-    marks: {
-      // 강조 텍스트
-      strong: ({children}: any) => `<strong class="font-semibold">${children}</strong>`,
-      em: ({children}: any) => `<em class="italic">${children}</em>`,
-      // 링크
-      link: ({children, value}: any) => `<a href="${value.href}" class="text-[#3d98f4] hover:underline" target="_blank" rel="noopener noreferrer">${children}</a>`,
+    h1: ({children}: any) => {
+      currentSection.content.push(`<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`);
+      return '';
     },
-    types: {
-      // 이미지 렌더링 (쿠키 없는 방식)
-      image: ({value}: any) => {
-        if (!value || !value.asset) return '';
-        
-        const imageUrl = getImageUrl(value.asset, { width: 800 });
-        const alt = value.alt || 'Image';
-        const caption = value.caption;
-        
-        return `
-          <figure class="my-8">
-            <img 
-              src="${imageUrl}" 
-              alt="${alt}" 
-              class="w-full h-auto rounded-lg shadow-md"
-              loading="lazy"
-            />
-            ${caption ? `<figcaption class="text-center text-sm text-gray-600 mt-2 italic">${caption}</figcaption>` : 
-              (value.alt ? `<figcaption class="text-center text-sm text-gray-600 mt-2 italic">${value.alt}</figcaption>` : '')}
-          </figure>
-        `;
-      },
-      // 표 렌더링
-      table: ({value}: any) => {
-        const {rows} = value;
-        if (!rows || rows.length === 0) return '';
-        
-        const headerRow = rows[0];
-        const bodyRows = rows.slice(1);
-        
-        return `
-          <div class="overflow-x-auto my-6">
-            <table class="min-w-full border-collapse border border-gray-300 dark:border-gray-600">
-              <thead class="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                  ${headerRow.cells.map((cell: any) => 
-                    `<th class="whitespace-nowrap border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold text-gray-900 dark:text-gray-100">${cell || ''}</th>`
+    h4: ({children}: any) => {
+      currentSection.content.push(`<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`);
+      return '';
+    },
+  },
+  list: {
+    bullet: ({ children }: any) => {
+      currentSection.content.push(`<ul class="list-disc list-inside mb-6 space-y-2 ml-4 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ul>`);
+      return '';
+    },
+    number: ({ children }: any) => {
+      currentSection.content.push(`<ol class="list-decimal list-inside mb-6 space-y-2 ml-4 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ol>`);
+      return '';
+    },
+  },
+  listItem: {
+    bullet: ({ children }: any) => `<li class="leading-loose">${children}</li>`,
+    number: ({ children }: any) => `<li class="leading-loose">${children}</li>`,
+  },
+  marks: {
+    strong: ({ children }: any) => `<strong class="font-semibold text-slate-800 dark:text-slate-200">${children}</strong>`,
+    em: ({ children }: any) => `<em class="italic">${children}</em>`,
+    link: ({ children, value }: any) => `<a href="${value.href}" class="text-sky-500 hover:underline" target="_blank" rel="noopener noreferrer">${children}</a>`,
+  },
+  types: {
+    image: ({ value }: any) => {
+      if (!value || !value.asset) return '';
+      const imageUrl = getImageUrl(value.asset, { width: 800 });
+      const alt = value.alt || 'Image';
+      const caption = value.caption;
+      const html = `
+        <figure class="my-8">
+          <img src="${imageUrl}" alt="${alt}" class="w-full h-auto rounded-lg shadow-md" loading="lazy" />
+          ${caption ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${caption}</figcaption>` : 
+            (value.alt ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${value.alt}</figcaption>` : '')}
+        </figure>
+      `;
+      currentSection.content.push(html);
+      return '';
+    },
+    table: ({ value }: any) => {
+      const { rows } = value;
+      if (!rows || rows.length === 0) return '';
+      const headerRow = rows[0];
+      const bodyRows = rows.slice(1);
+      const html = `
+        <div class="overflow-x-auto my-6 border border-slate-200 dark:border-slate-700 rounded-lg">
+          <table class="min-w-full border-collapse">
+            <thead class="bg-slate-50 dark:bg-slate-700/50">
+              <tr>
+                ${headerRow.cells.map((cell: any) => 
+                  `<th class="whitespace-nowrap border-b border-slate-200 dark:border-slate-700 px-4 py-3 text-left font-semibold text-slate-800 dark:text-slate-200">${cell || ''}</th>`
+                ).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${bodyRows.map((row: any) => `
+                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                  ${row.cells.map((cell: any) => 
+                    `<td class="whitespace-nowrap border-t border-slate-200 dark:border-slate-700 px-4 py-3 text-slate-600 dark:text-slate-300">${cell || ''}</td>`
                   ).join('')}
                 </tr>
-              </thead>
-              <tbody>
-                ${bodyRows.map((row: any) => `
-                  <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                    ${row.cells.map((cell: any) => 
-                      `<td class="whitespace-nowrap border border-gray-300 dark:border-gray-600 px-4 py-2 text-gray-700 dark:text-gray-300">${cell || ''}</td>`
-                    ).join('')}
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        `;
-      }
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+      currentSection.content.push(html);
+      return '';
     }
   }
-});
----
+};
 
+toHTML(post.body || [], { components });
+sections.push(currentSection);
+
+---
 <BaseLayout title={post.title} description={post.excerpt}>
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <article class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-      <div class="p-4">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 dark:text-white mb-4">{post.title}</h1>
+    <article class="bg-transparent">
+      <div class="p-4 sm:p-6 md:p-8">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">{post.title}</h1>
         <div class="flex items-center text-base text-gray-500 dark:text-gray-400 mb-8">
           <span>Published on {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
           {post.category && (
@@ -216,19 +237,26 @@ const bodyHtml = toHTML(post.body || [], {
         
         <!-- 3. 목차(TOC) 컴포넌트 수정 (넘버링 표시) -->
         {headings.length > 0 && (
-          <div class="mb-8 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg border dark:border-gray-700">
-            <h2 class="text-xl font-bold mb-3 dark:text-white">On this page</h2>
+          <div class="mb-12 p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700/50">
+            <h2 class="text-xl font-bold mb-4 dark:text-white flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-sky-500"><path d="M4 6h16M4 12h16M4 18h7"/></svg>On this page</h2>
             <ul class="space-y-2">
               {headings.map((heading) => (
                 <li class:list={[
                   'font-medium',
-                  { 'ml-7': heading.level === 3 }
+                  { 'ml-4': heading.level === 3 } // H3 들여쓰기 조정
                 ]}>
                   <a 
                     href={`#${heading.slug}`} 
-                    class="toc-link flex items-start text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors"
+                    class="toc-link flex items-start text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors group"
                   >
-                    <span class="mr-2 text-gray-500 dark:text-gray-400 w-5 text-right shrink-0">{heading.number}</span>
+                    <span 
+                      class:list={[
+                        "mr-2.5 text-gray-400 dark:text-gray-500 w-5 text-right shrink-0 group-hover:text-sky-500 transition-colors",
+                        heading.level === 2 ? 'font-mono' : 'text-center' // H2는 숫자 폰트, H3는 기호 중앙 정렬
+                      ]}
+                    >
+                      {heading.number}
+                    </span>
                     <span class="flex-1">{heading.text}</span>
                   </a>
                 </li>
@@ -242,7 +270,37 @@ const bodyHtml = toHTML(post.body || [], {
           <Adsense slot="7490974568" />
         </div>
 
-        <div class="prose prose-lg max-w-none dark:prose-invert" set:html={bodyHtml} />
+        <div class="space-y-16">
+          {sections.map((section) => {
+            if (!section.title) {
+              // 프롤로그 섹션 (카드 UI 없음)
+              return (
+                <div 
+                  class="prose prose-lg max-w-none dark:prose-invert" 
+                  set:html={section.content.join('')} 
+                />
+              )
+            }
+            // H2가 있는 일반 섹션 (카드 UI 적용)
+            return (
+              <div class="p-1 rounded-2xl bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 hover:shadow-2xl hover:shadow-blue-500/40 transition-all duration-300">
+                <section 
+                  id={section.id} 
+                  class="scroll-mt-24 p-6 sm:p-8 rounded-[15px] bg-white/90 dark:bg-slate-800/60 backdrop-blur-lg"
+                >
+                  <h2 
+                    class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-8 tracking-tight flex items-start gap-3"
+                    set:html={section.title}
+                  />
+                  <div 
+                    class="prose prose-lg max-w-none dark:prose-invert" 
+                    set:html={section.content.join('')} 
+                  />
+                </section>
+              </div>
+            )
+          })}
+        </div>
 
         <!-- 본문 하단 광고 -->
         <div class="my-8 flex justify-center">
@@ -252,6 +310,28 @@ const bodyHtml = toHTML(post.body || [], {
     </article>
   </div>
 </BaseLayout>
+<style>
+  .prose > :first-child {
+    margin-top: 0;
+  }
+  .prose h3:first-child {
+    margin-top: 0;
+  }
+  .prose h2, .prose h3, .prose h4 {
+    /* set:html로 주입되는 콘텐츠 내부의 제목 스타일은 여기에 정의합니다. */
+  }
+</style>
+
+<style is:global>
+  body {
+    background-color: #f8fafc; /* light mode fallback */
+    background-image: linear-gradient(180deg, #f0f4ff 0%, #f8fafc 100%);
+  }
+  .dark body {
+    background-color: #0b1120; /* dark mode fallback */
+    background-image: linear-gradient(180deg, #0d1222 0%, #020617 100%);
+  }
+</style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
