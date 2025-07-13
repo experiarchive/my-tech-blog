@@ -9,7 +9,13 @@ export interface Props {
 	description?: string;
 }
 
-const { title, description = 'My personal tech blog' } = Astro.props;
+const { title, description } = Astro.props;
+
+// description이 없거나 공백일 때만 기본값 사용
+const finalDescription = description && description.trim().length > 0 
+  ? description.trim()
+  : '기술과 건강에 관한 유용한 정보를 공유하는 블로그입니다.';
+
 const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 ---
 <!doctype html>
@@ -17,7 +23,7 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 	<head>
 		<!-- head 내용은 동일 -->
 		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
+		<meta name="description" content={finalDescription} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />

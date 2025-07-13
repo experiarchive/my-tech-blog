@@ -45,6 +45,24 @@ if (!post) {
   return Astro.redirect('/404');
 }
 
+// excerpt가 없거나 공백일 경우 고유한 description 생성
+const getUniqueDescription = (title: string, excerpt: string) => {
+  // excerpt가 있고 공백이 아닌 경우
+  if (excerpt && excerpt.trim().length > 0) {
+    return excerpt.trim();
+  }
+  
+  // excerpt가 없거나 공백인 경우 제목 기반으로 description 생성
+  return `${title}에 대한 자세한 내용을 확인해보세요. 유용한 정보와 실용적인 팁을 제공합니다.`;
+};
+
+const description = getUniqueDescription(post.title, post.excerpt);
+
+// 디버깅을 위한 로그
+console.log('Post title:', post.title);
+console.log('Original excerpt:', post.excerpt);
+console.log('Final description:', description);
+
 // 1. Slugify 함수 및 headings 배열, 카운터 추가
 const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
 
@@ -205,7 +223,7 @@ toHTML(post.body || [], { components });
 sections.push(currentSection);
 
 ---
-<BaseLayout title={post.title} description={post.excerpt}>
+<BaseLayout title={post.title} description={description}>
   <div class="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 py-12">
     <article class="bg-transparent">
       <div class="py-4 sm:p-6 md:p-8">

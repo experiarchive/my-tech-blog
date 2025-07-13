@@ -22,6 +22,14 @@ const query = `*[_type == "post"] | order(publishedAt desc) {
 
 const posts: any[] = await client.fetch(query);
 
+// 디버깅을 위한 로그 - excerpt 내용 확인
+console.log('Posts excerpts:', posts?.map((post: any) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  excerptLength: post.excerpt?.length || 0,
+  isEmptyExcerpt: !post.excerpt || post.excerpt.trim().length === 0
+})));
+
 // 디버깅을 위한 로그
 console.log('Posts with dates:', posts?.map((post: any) => ({
   title: post.title,
