@@ -21,7 +21,7 @@ const { PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET } = env;
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://lintrahub.com',
+  site: 'https://ko.lintrahub.com',
   integrations: [
     tailwind(),
     react(),
