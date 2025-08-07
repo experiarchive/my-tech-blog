@@ -11,43 +11,10 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 
 <ins class="adsbygoogle"
      style="display:block"
-     data-ad-client={adClient}
+     data-ad-client="ca-pub-3505313580947440"
      data-ad-slot={slot}
      data-ad-format={format}
      data-full-width-responsive="true"></ins>
-<script is:inline>
-     function initializeAd() {
-          console.log('🔍 AdSense: Detailed diagnostics');
-          console.log('📊 window.adsbygoogle:', typeof window.adsbygoogle, window.adsbygoogle);
-          console.log('🎯 Script element:', document.querySelector('script[src*="adsbygoogle.js"]'));
-          console.log('🌐 Network status:', navigator.onLine);
-          
-          // 우선 기본 방식으로 시도 (medianincome.html 방식)
-          try {
-               console.log('🚀 AdSense: Trying direct initialization');
-               (adsbygoogle = window.adsbygoogle || []).push({});
-               console.log('✅ AdSense: Direct push successful');
-          } catch (error) {
-               console.error('❌ AdSense: Direct push failed:', error);
-               console.log('📋 Error details:', {
-                    message: error.message,
-                    stack: error.stack,
-                    adsbygoogle: window.adsbygoogle
-               });
-          }
-     }
-     
-     // 여러 시나리오에서 실행
-     console.log('🎬 AdSense: Starting initialization');
-     
-     // 즉시 실행
-     initializeAd();
-     
-     // DOM 로드 후에도 실행
-     if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', initializeAd);
-     }
-     
-     // 윈도우 로드 후에도 실행
-     window.addEventListener('load', initializeAd);
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
 </script> 
