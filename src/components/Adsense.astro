@@ -15,9 +15,28 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
      data-ad-slot={slot}
      data-ad-format={format}
      data-full-width-responsive="true"></ins>
-<script>
+<script define:vars={{slot}}>
      // DOM이 완전히 렌더링된 후 실행하도록 지연
      setTimeout(() => {
-          (adsbygoogle = window.adsbygoogle || []).push({});
+          console.log('🎯 AdSense: Initializing slot ' + slot);
+          try {
+               (adsbygoogle = window.adsbygoogle || []).push({});
+               console.log('✅ AdSense: Slot ' + slot + ' initialized');
+               
+               // 5초 후 광고 상태 확인
+               setTimeout(() => {
+                    const adElement = document.currentScript?.previousElementSibling;
+                    if (adElement && adElement.classList.contains('adsbygoogle')) {
+                         console.log('📊 AdSense Status for slot ' + slot + ':', {
+                              status: adElement.getAttribute('data-ad-status'),
+                              height: adElement.offsetHeight,
+                              innerHTML: adElement.innerHTML.substring(0, 100)
+                         });
+                    }
+               }, 5000);
+               
+          } catch (error) {
+               console.error('❌ AdSense: Error with slot ' + slot + ':', error);
+          }
      }, 100);
 </script> 
