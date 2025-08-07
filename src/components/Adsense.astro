@@ -16,25 +16,36 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
      data-ad-format={format}
      data-full-width-responsive="true"></ins>
 <script is:inline>
-     // 애드센스 스크립트 로드 완료를 기다린 후 실행
+     // 최대 재시도 횟수 제한으로 무한루프 방지
+     let retryCount = 0;
+     const MAX_RETRIES = 50; // 5초 제한 (100ms * 50)
+     
      function waitForAdSense() {
-          console.log('🔍 AdSense: Checking if script is loaded...');
+          console.log(`🔍 AdSense: Checking if script is loaded... (${retryCount}/${MAX_RETRIES})`);
           
-          if (typeof window.adsbygoogle !== 'undefined' || document.querySelector('script[src*="adsbygoogle.js"]')) {
-               console.log('✅ AdSense: Script detected, initializing ad');
+          // 재시도 횟수 초과 시 중단
+          if (retryCount >= MAX_RETRIES) {
+               console.error('❌ AdSense: Max retries exceeded, giving up');
+               return;
+          }
+          
+          // adsbygoogle 배열이 실제로 존재하고 사용 가능한지 확인
+          if (typeof window.adsbygoogle !== 'undefined' && Array.isArray(window.adsbygoogle)) {
+               console.log('✅ AdSense: Script ready, initializing ad');
                try {
-                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    window.adsbygoogle.push({});
                     console.log('✅ AdSense: Push successful');
                } catch (error) {
                     console.error('❌ AdSense: Push failed:', error);
                }
           } else {
-               console.log('⏳ AdSense: Script not ready, retrying in 100ms');
+               retryCount++;
+               console.log('⏳ AdSense: Script not ready, retrying...');
                setTimeout(waitForAdSense, 100);
           }
      }
      
-     // DOM이 로드된 후 애드센스 대기 시작
+     // DOM 로드 후 시작
      if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', waitForAdSense);
      } else {
