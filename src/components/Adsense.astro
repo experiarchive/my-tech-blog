@@ -16,39 +16,38 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
      data-ad-format={format}
      data-full-width-responsive="true"></ins>
 <script is:inline>
-     // 최대 재시도 횟수 제한으로 무한루프 방지
-     let retryCount = 0;
-     const MAX_RETRIES = 50; // 5초 제한 (100ms * 50)
-     
-     function waitForAdSense() {
-          console.log(`🔍 AdSense: Checking if script is loaded... (${retryCount}/${MAX_RETRIES})`);
+     function initializeAd() {
+          console.log('🔍 AdSense: Detailed diagnostics');
+          console.log('📊 window.adsbygoogle:', typeof window.adsbygoogle, window.adsbygoogle);
+          console.log('🎯 Script element:', document.querySelector('script[src*="adsbygoogle.js"]'));
+          console.log('🌐 Network status:', navigator.onLine);
           
-          // 재시도 횟수 초과 시 중단
-          if (retryCount >= MAX_RETRIES) {
-               console.error('❌ AdSense: Max retries exceeded, giving up');
-               return;
-          }
-          
-          // adsbygoogle 배열이 실제로 존재하고 사용 가능한지 확인
-          if (typeof window.adsbygoogle !== 'undefined' && Array.isArray(window.adsbygoogle)) {
-               console.log('✅ AdSense: Script ready, initializing ad');
-               try {
-                    window.adsbygoogle.push({});
-                    console.log('✅ AdSense: Push successful');
-               } catch (error) {
-                    console.error('❌ AdSense: Push failed:', error);
-               }
-          } else {
-               retryCount++;
-               console.log('⏳ AdSense: Script not ready, retrying...');
-               setTimeout(waitForAdSense, 100);
+          // 우선 기본 방식으로 시도 (medianincome.html 방식)
+          try {
+               console.log('🚀 AdSense: Trying direct initialization');
+               (adsbygoogle = window.adsbygoogle || []).push({});
+               console.log('✅ AdSense: Direct push successful');
+          } catch (error) {
+               console.error('❌ AdSense: Direct push failed:', error);
+               console.log('📋 Error details:', {
+                    message: error.message,
+                    stack: error.stack,
+                    adsbygoogle: window.adsbygoogle
+               });
           }
      }
      
-     // DOM 로드 후 시작
+     // 여러 시나리오에서 실행
+     console.log('🎬 AdSense: Starting initialization');
+     
+     // 즉시 실행
+     initializeAd();
+     
+     // DOM 로드 후에도 실행
      if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', waitForAdSense);
-     } else {
-          waitForAdSense();
+          document.addEventListener('DOMContentLoaded', initializeAd);
      }
+     
+     // 윈도우 로드 후에도 실행
+     window.addEventListener('load', initializeAd);
 </script> 
