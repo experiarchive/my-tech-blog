@@ -10,11 +10,14 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 ---
 
 <ins class="adsbygoogle"
-     style="display:block"
+     style="display:block; width:100%; min-height:250px;"
      data-ad-client="ca-pub-3505313580947440"
      data-ad-slot={slot}
      data-ad-format={format}
      data-full-width-responsive="true"></ins>
 <script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
+     // DOM이 완전히 렌더링된 후 실행하도록 지연
+     setTimeout(() => {
+          (adsbygoogle = window.adsbygoogle || []).push({});
+     }, 100);
 </script> 
