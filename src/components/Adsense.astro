@@ -16,7 +16,12 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
      data-ad-format={format}
      data-full-width-responsive="true"></ins>
 <script is:inline>
-     document.addEventListener('DOMContentLoaded', () => {
+     // medianincome.html과 동일한 방식: 즉시 실행
+     try {
+          console.log('🔍 AdSense: Immediate push for slot');
           (adsbygoogle = window.adsbygoogle || []).push({});
-     });
+          console.log('✅ AdSense: Push successful');
+     } catch (error) {
+          console.error('❌ AdSense: Push failed:', error);
+     }
 </script> 
