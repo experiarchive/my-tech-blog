@@ -31,5 +31,10 @@ export default defineConfig({
       dataset: PUBLIC_SANITY_DATASET,
       useCdn: false,
     })
-  ]
+  ],
+  vite: {
+    optimizeDeps: {
+      exclude: ['react-is', 'styled-components']
+    }
+  }
 });
