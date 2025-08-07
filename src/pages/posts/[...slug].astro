@@ -289,28 +289,40 @@ sections.push(currentSection);
         </div>
 
         <div class="space-y-8">
-          {sections.map((section) => {
+          {sections.map((section, index) => {
             // 섹션에 내용이 없으면 렌더링하지 않습니다 (예: 글이 H2로 바로 시작하는 경우의 빈 프롤로그).
             if (section.content.length === 0) return null;
             
+            // H2 섹션의 개수를 세기 위한 로직 (프롤로그 제외)
+            const h2SectionIndex = sections.filter((s, i) => i <= index && s.title && s.content.length > 0).length;
+            
             return (
-              <div class="p-px rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:shadow-xl hover:shadow-slate-400/30 dark:hover:shadow-black/30 transition-all duration-300">
-                <section 
-                  id={section.id} 
-                  class="scroll-mt-24 p-6 sm:p-8 rounded-[14px] bg-slate-50/90 dark:bg-slate-800/90 backdrop-blur-lg"
-                >
-                  {section.title && (
-                    <h2 
-                      class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-8 tracking-tight flex items-start gap-3"
-                      set:html={section.title}
+              <>
+                <div class="p-px rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:shadow-xl hover:shadow-slate-400/30 dark:hover:shadow-black/30 transition-all duration-300">
+                  <section 
+                    id={section.id} 
+                    class="scroll-mt-24 p-6 sm:p-8 rounded-[14px] bg-slate-50/90 dark:bg-slate-800/90 backdrop-blur-lg"
+                  >
+                    {section.title && (
+                      <h2 
+                        class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-8 tracking-tight flex items-start gap-3"
+                        set:html={section.title}
+                      />
+                    )}
+                    <div 
+                      class="prose prose-lg max-w-none dark:prose-invert" 
+                      set:html={section.content.join('')} 
                     />
-                  )}
-                  <div 
-                    class="prose prose-lg max-w-none dark:prose-invert" 
-                    set:html={section.content.join('')} 
-                  />
-                </section>
-              </div>
+                  </section>
+                </div>
+                
+                {/* 두 번째 H2 섹션 후에 본문 중간 광고 삽입 */}
+                {h2SectionIndex === 2 && (
+                  <div class="my-8 flex justify-center">
+                    <Adsense slot="5616138153" />
+                  </div>
+                )}
+              </>
             )
           })}
         </div>
