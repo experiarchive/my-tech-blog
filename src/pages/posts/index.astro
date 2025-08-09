@@ -66,8 +66,8 @@ if (!posts) {
                 </article>
             
                 {/* 3번째 게시글 뒤에 광고 삽입 */}
-                {(index + 1) % 3 === 0 && (
-                  <div class="my-6 bg-white dark:bg-gray-800 rounded-xl p-4 flex justify-center">
+                {import.meta.env.PROD && (index + 1) % 3 === 0 && (
+                  <div class="my-6 bg-white dark:bg-gray-800 rounded-xl p-4 flex justify-center ad-wrapper">
                     <Adsense slot="5847269149" />
                   </div>
                 )}

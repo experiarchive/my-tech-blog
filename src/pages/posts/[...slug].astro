@@ -96,144 +96,112 @@ const toPlainText = (blocks: any[] = []) => {
         .join('');
 };
 
-// --- 본문 콘텐츠를 프롤로그와 섹션으로 그룹화하는 로직 ---
-const sections: { title: string | null; id: string; content: string[] }[] = [];
-// 첫 섹션을 미리 만들어 둠 (h2 이전의 프롤로그 콘텐츠용)
-let currentSection: { title: string | null; id: string; content: string[] } = {
-  title: null, 
-  id: 'prologue',
-  content: []
-};
+// --- H2 기준 섹션 분리 및 순서 보존 렌더링 ---
+type PTBlock = any;
+type Section = { title: string | null; id: string; blocks: PTBlock[] };
 
-const components = {
-  block: {
-    h2: ({ children, value }: any) => {
-      // h2를 만나면, 현재까지의 섹션(프롤로그 또는 이전 h2섹션)을 배열에 푸시합니다.
-      sections.push(currentSection);
+const sections: Section[] = [];
+let currentSection: Section = { title: null, id: 'prologue', blocks: [] };
 
-      // h2 정보로 새 섹션을 시작합니다.
-      const text = toPlainText(value.children);
-      const slug = createUniqueSlug(text);
-      h2Counter++;
-      h3Counter = 0;
-      const number = `${h2Counter}.`;
-      headings.push({ level: 2, text, slug, number });
-      
-      currentSection = {
-        title: children, // HTML이 포함된 제목
-        id: slug,
-        content: []
-      };
-      
-      return ''; // h2 자체는 렌더링하지 않습니다.
-    },
-    h3: ({ children, value }: any) => {
-      h3Counter++;
-      const text = toPlainText(value.children);
-      const slug = createUniqueSlug(text);
-      const number = '–'; // H3 기호를 대시로 변경
-      headings.push({ level: 3, text, slug, number });
+const bodyBlocks: PTBlock[] = Array.isArray(post.body) ? post.body : [];
 
-      // 본문 H3에서 왼쪽 구분선을 제거합니다.
-      const h3Html = `<h3 id="${slug}" class="scroll-mt-24 mt-10 mb-4 text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">${children}</h3>`;
-      currentSection.content.push(h3Html);
-      return '';
-    },
-    normal: ({ children }: any) => {
-      currentSection.content.push(`<p class="mb-6 leading-loose text-slate-700 dark:text-slate-300 text-[17px] sm:text-lg">${children}</p>`);
-      return '';
-    },
-    h1: ({children}: any) => {
-      currentSection.content.push(`<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`);
-      return '';
-    },
-    h4: ({children}: any) => {
-      currentSection.content.push(`<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`);
-      return '';
-    },
-  },
-  list: {
-    bullet: ({ children }: any) => {
-      currentSection.content.push(`<ul class="list-disc list-inside mb-6 space-y-2 ml-4 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ul>`);
-      return '';
-    },
-    number: ({ children }: any) => {
-      currentSection.content.push(`<ol class="list-decimal list-inside mb-6 space-y-2 ml-4 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ol>`);
-      return '';
-    },
-  },
-  listItem: {
-    bullet: ({ children }: any) => `<li class="leading-loose">${children}</li>`,
-    number: ({ children }: any) => `<li class="leading-loose">${children}</li>`,
-  },
-  marks: {
-    strong: ({ children }: any) => `<strong class="font-semibold text-slate-800 dark:text-slate-200">${children}</strong>`,
-    em: ({ children }: any) => `<em class="italic">${children}</em>`,
-    link: ({ children, value }: any) => `<a href="${value.href}" class="text-slate-600 dark:text-slate-400 hover:underline hover:text-slate-800 dark:hover:text-slate-200" target="_blank" rel="noopener noreferrer">${children}</a>`,
-  },
-  types: {
-    image: ({ value }: any) => {
-      if (!value || !value.asset) return '';
-      const imageUrl = getImageUrl(value.asset, { width: 800 });
-      const alt = value.alt || 'Image';
-      const caption = value.caption;
-      const html = `
-        <figure class="my-8">
-          <img src="${imageUrl}" alt="${alt}" class="w-full h-auto rounded-lg shadow-md" loading="lazy" />
-          ${caption ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${caption}</figcaption>` : 
-            (value.alt ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${value.alt}</figcaption>` : '')}
-        </figure>
-      `;
-      currentSection.content.push(html);
-      return '';
-    },
-    table: ({ value }: any) => {
-      const { rows } = value;
-      if (!rows || rows.length === 0) return '';
-      const headerRow = rows[0];
-      const bodyRows = rows.slice(1);
-      const html = `
-        <div class="overflow-x-auto my-6 border border-slate-200 dark:border-slate-700 rounded-lg">
-          <table class="min-w-full border-collapse">
-            <thead class="bg-slate-50 dark:bg-slate-700/50">
-              <tr>
-                ${headerRow.cells.map((cell: any) => 
-                  `<th class="whitespace-nowrap border-b border-slate-200 dark:border-slate-700 px-4 py-3 text-left font-semibold text-slate-800 dark:text-slate-200">${cell || ''}</th>`
-                ).join('')}
-              </tr>
-            </thead>
-            <tbody>
-              ${bodyRows.map((row: any) => `
-                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                  ${row.cells.map((cell: any) => 
-                    `<td class="whitespace-nowrap border-t border-slate-200 dark:border-slate-700 px-4 py-3 text-slate-600 dark:text-slate-300">${cell || ''}</td>`
-                  ).join('')}
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        </div>
-      `;
-      currentSection.content.push(html);
-      return '';
-    }
+for (const block of bodyBlocks) {
+  if (block._type === 'block' && block.style === 'h2') {
+    sections.push(currentSection);
+    const text = toPlainText(block.children);
+    const slug = createUniqueSlug(text);
+    h2Counter++;
+    h3Counter = 0;
+    const number = `${h2Counter}.`;
+    headings.push({ level: 2, text, slug, number });
+    currentSection = { title: text, id: slug, blocks: [] };
+    continue;
   }
-};
-
-toHTML(post.body || [], { components });
+  currentSection.blocks.push(block);
+}
 sections.push(currentSection);
 
-// 중간 광고 위치 계산 (두 번째 H2 섹션 후)
-const adPosition = 2; // 두 번째 H2 섹션 후
-let h2Count = 0;
-const sectionsWithAd = sections.map((section, index) => {
-  if (section.title && section.content.length > 0) {
-    h2Count++;
-  }
-  return {
-    ...section,
-    showAdAfter: h2Count === adPosition
+const renderBlocks = (blocks: PTBlock[]) => {
+  const components = {
+    block: {
+      normal: ({ children }: any) => `<p class="mb-6 text-slate-700 dark:text-slate-300 text-[17px] sm:text-lg">${children}</p>`,
+      h3: ({ children, value }: any) => {
+        h3Counter++;
+        const text = toPlainText(value.children);
+        const slug = createUniqueSlug(text);
+        const number = '–';
+        headings.push({ level: 3, text, slug, number });
+        return `<h3 id="${slug}" class="scroll-mt-24 mt-10 mb-4 text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">${children}</h3>`;
+      },
+      h1: ({ children }: any) => `<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`,
+      h4: ({ children }: any) => `<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`,
+    },
+    list: {
+      bullet: ({ children }: any) => `<ul class="list-disc list-outside pl-5 mb-6 space-y-2 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ul>`,
+      number: ({ children }: any) => `<ol class="list-decimal list-outside pl-5 mb-6 space-y-2 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ol>`,
+    },
+    listItem: {
+      bullet: ({ children }: any) => `<li>${children}</li>`,
+      number: ({ children }: any) => `<li>${children}</li>`,
+    },
+    marks: {
+      strong: ({ children }: any) => `<strong class="font-semibold text-slate-800 dark:text-slate-200">${children}</strong>`,
+      em: ({ children }: any) => `<em class="italic">${children}</em>`,
+      link: ({ children, value }: any) => `<a href="${value.href}" target="_blank" rel="noopener noreferrer">${children}</a>`,
+    },
+    types: {
+      image: ({ value }: any) => {
+        if (!value || !value.asset) return '';
+        const imageUrl = getImageUrl(value.asset, { width: 800 });
+        const alt = value.alt || 'Image';
+        const caption = value.caption;
+        return `
+          <figure class="my-8">
+            <img src="${imageUrl}" alt="${alt}" class="w-full h-auto rounded-lg shadow-md" loading="lazy" />
+            ${caption ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${caption}</figcaption>` : 
+              (value.alt ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${value.alt}</figcaption>` : '')}
+          </figure>
+        `;
+      },
+      table: ({ value }: any) => {
+        const { rows } = value;
+        if (!rows || rows.length === 0) return '';
+        const headerRow = rows[0];
+        const bodyRows = rows.slice(1);
+        return `
+          <div class="overflow-x-auto my-6 border border-slate-200 dark:border-slate-700 rounded-lg">
+            <table class="min-w-full border-collapse">
+              <thead class="bg-slate-50 dark:bg-slate-700/50">
+                <tr>
+                  ${headerRow.cells.map((cell: any) => 
+                    `<th class="whitespace-nowrap border-b border-slate-200 dark:border-slate-700 px-4 py-3 text-left font-semibold text-slate-800 dark:text-slate-200">${cell || ''}</th>`
+                  ).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                ${bodyRows.map((row: any) => `
+                  <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
+                    ${row.cells.map((cell: any) => 
+                      `<td class="whitespace-nowrap border-t border-slate-200 dark:border-slate-700 px-4 py-3 text-slate-600 dark:text-slate-300">${cell || ''}</td>`
+                    ).join('')}
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+    }
   };
+  return toHTML(blocks || [], { components });
+};
+
+const adPosition = 2;
+let h2Count = 0;
+const sectionsWithAd = sections.map((section) => {
+  const html = renderBlocks(section.blocks);
+  if (section.title && html.trim().length > 0) h2Count++;
+  return { ...section, html, showAdAfter: h2Count === adPosition };
 });
 
 ---
@@ -297,16 +265,16 @@ const sectionsWithAd = sections.map((section, index) => {
           </div>
         )}
 
-        <!-- 본문 상단 광고 -->
-        <div class="my-8 flex justify-center">
-          <Adsense slot="2197969029" />
-        </div>
+        <!-- 본문 상단 광고 (prod only) -->
+        {import.meta.env.PROD && (
+          <div class="my-8 flex justify-center ad-wrapper">
+            <Adsense slot="2197969029" />
+          </div>
+        )}
 
         <div class="space-y-8">
           {sectionsWithAd.map((section, index) => {
-            // 섹션에 내용이 없으면 렌더링하지 않습니다 (예: 글이 H2로 바로 시작하는 경우의 빈 프롤로그).
-            if (section.content.length === 0) return null;
-            
+            if (!section.html || section.html.trim().length === 0) return null;
             return (
               <Fragment>
                 <div class="p-px rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:shadow-xl hover:shadow-slate-400/30 dark:hover:shadow-black/30 transition-all duration-300">
@@ -317,19 +285,18 @@ const sectionsWithAd = sections.map((section, index) => {
                     {section.title && (
                       <h2 
                         class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-8 tracking-tight flex items-start gap-3"
-                        set:html={section.title}
-                      />
+                      >{section.title}</h2>
                     )}
                     <div 
                       class="prose prose-lg max-w-none dark:prose-invert" 
-                      set:html={section.content.join('')} 
+                      set:html={section.html} 
                     />
                   </section>
                 </div>
                 
-                {/* 두 번째 H2 섹션 후에 본문 중간 광고 삽입 */}
-                {section.showAdAfter && (
-                  <div class="my-8 flex justify-center">
+                {/* 두 번째 H2 섹션 후에 본문 중간 광고 삽입 (prod only) */}
+                {import.meta.env.PROD && section.showAdAfter && (
+                  <div class="my-8 flex justify-center ad-wrapper">
                     <Adsense slot="5616138153" />
                   </div>
                 )}
@@ -338,10 +305,12 @@ const sectionsWithAd = sections.map((section, index) => {
           })}
         </div>
 
-        <!-- 본문 하단 광고 -->
-        <div class="my-8 flex justify-center">
-          <Adsense slot="8899108740" />
-        </div>
+        <!-- 본문 하단 광고 (prod only) -->
+        {import.meta.env.PROD && (
+          <div class="my-8 flex justify-center ad-wrapper">
+            <Adsense slot="8899108740" />
+          </div>
+        )}
       </div>
     </article>
   </div>
