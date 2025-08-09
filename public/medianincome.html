@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2025년 한부모가정 지원 기준 중위소득</title>
+    <title>2025년 한부모가정 지원 기준 — 기준 중위소득</title>
+    <meta name="description" content="2025년 한부모가정 지원 기준 요약: 중위소득 63% 기준표, 청소년 한부모 기준(65%·72%), 신청·문의 안내를 한 페이지에서 확인. 재구성된 정보 제공." />
+    <link rel="canonical" id="canonical-link" href="" />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,234 +16,138 @@
      crossorigin="anonymous"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #34495e;
+            background: linear-gradient(180deg, #f0f4ff 0%, #f8f9fa 40%);
+            color: #2d3748;
             line-height: 1.7;
+            padding-top: 64px; /* offset for fixed nav */
         }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
+
+        /* Top fixed nav */
+        .topnav { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); border-bottom: 1px solid #e9eef6; z-index: 1000; }
+        .topnav .inner { max-width: 1160px; margin: 0 auto; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+        .brand { font-weight: 700; color: #1f2937; text-decoration: none; }
+        .nav-links { display: flex; gap: 8px; align-items: center; }
+        .nav-links a { color: #475569; text-decoration: none; font-size: 14px; padding: 8px 10px; border-radius: 8px; }
+        .nav-links a:hover { background: #f1f5f9; color:#0f172a; }
+        .nav-links a.active { background: #e8f0ff; color: #1d4ed8; }
+
+        /* Scroll progress */
+        .progress { position: fixed; top: 56px; left: 0; right: 0; height: 3px; z-index: 1000; }
+        .progress .bar { width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #22d3ee); transition: width 0.15s linear; }
+
+        .container { max-width: 1160px; margin: 0 auto; padding: 20px; }
+
+        header.hero {
+            background: linear-gradient(135deg, #5b8def 0%, #2ec5ff 100%);
+            color: #fff;
+            border-radius: 18px;
+            padding: 36px 28px;
+            box-shadow: 0 12px 40px rgba(43, 99, 221, 0.25);
+            margin: 18px 0 26px;
+            position: relative;
+            overflow: hidden;
         }
-        
-        header {
-            text-align: center;
-            padding: 20px 0;
-            margin-bottom: 40px;
+        header.hero::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: radial-gradient(1200px 400px at 100% -10%, rgba(255,255,255,0.25), transparent 60%);
+            pointer-events: none;
         }
-        
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-            font-weight: 700;
-            color: #2c3e50;
+        .hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
+        .hero p { margin-top: 8px; opacity: 0.95; }
+
+        .quick-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.18);
+            color: #fff; border: 1px solid rgba(255,255,255,0.28);
+            padding: 6px 10px; border-radius: 999px; font-size: 13px;
+            backdrop-filter: blur(6px);
         }
-        
-        .subtitle {
-            font-size: 18px;
-            color: #7f8c8d;
-        }
-        
+
         .section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.07);
-            border: 1px solid #e9ecef;
+            background: #fff; border-radius: 16px; padding: 24px; margin: 18px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e9eef6;
+            scroll-margin-top: 72px; /* anchor offset */
         }
-        
-        h2 {
-            color: #3498db;
-            font-size: 22px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #f0f0f0;
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 15px;
-        }
-        
-        th, td {
-            padding: 15px 10px;
-            text-align: center;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        th {
-            background-color: #f8f9fa;
-            font-weight: 500;
-            color: #555;
-            white-space: nowrap;
-        }
-        
-        tr:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .amount {
-            font-weight: 500;
-            color: #333;
-            white-space: nowrap;
-        }
-        
-        .note {
-            background-color: #eaf4ff;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-            border-radius: 5px;
-        }
-        
-        .note-icon {
-            color: #3498db;
-            font-weight: bold;
-        }
-        
-        /* AdSense 광고 스타일 */
-        .ad-container {
-            margin: 30px 0;
-            text-align: center;
-            min-height: 100px;
-        }
-        
-        /* 모바일 반응형 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            header {
-                padding: 10px 0;
-                margin-bottom: 30px;
-            }
-            
-            h1 {
-                font-size: 26px;
-            }
-            
-            .subtitle {
-                font-size: 16px;
-            }
-            
-            .section {
-                padding: 20px;
-                margin-bottom: 20px;
-            }
-            
-            h2 {
-                font-size: 20px;
-            }
-            
-            table {
-                font-size: 14px;
-            }
-            
-            th, td {
-                padding: 12px 5px;
-            }
-            
-            .note {
-                font-size: 13px;
-                padding: 12px;
-            }
-        }
-        
-        /* 아주 작은 화면 */
-        @media (max-width: 480px) {
-            table {
-                font-size: 13px;
-            }
-            
-            th, td {
-                padding: 10px 3px;
-            }
-        }
-        
-        /* 다크모드 지원 */
+        .section h2 { color: #2563eb; font-size: 20px; margin-bottom: 10px; }
+        .section .sub { color: #64748b; font-size: 14px; margin-bottom: 10px; }
+
+        /* Reveal animation */
+        .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; font-size: 15px; }
+        th, td { padding: 15px 10px; text-align: center; border-bottom: 1px solid #e0e0e0; }
+        th { background-color: #f8fafc; font-weight: 500; color: #555; white-space: nowrap; }
+        tr:hover { background-color: #f8f9fa; }
+        .amount { font-weight: 600; color: #1f2937; white-space: nowrap; }
+
+        .note { background: #eef6ff; border: 1px solid #dbeafe; color: #0f3d8c; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 10px; font-size: 13px; margin-top: 12px; }
+        .ad-container { margin: 28px 0; text-align: center; min-height: 100px; }
+
+        footer { margin: 26px 0; color: #6b7280; font-size: 13px; text-align: center; }
+
+        /* FAB quick-jump */
+        .fab { position: fixed; right: 18px; bottom: 18px; z-index: 999; }
+        .fab-btn { width: 48px; height: 48px; border-radius: 50%; background: #2563eb; color: #fff; border: none; box-shadow: 0 8px 24px rgba(37,99,235,0.35); cursor: pointer; font-size: 20px; }
+        .fab-menu { position: absolute; right: 0; bottom: 56px; display: none; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 6px; box-shadow: 0 14px 34px rgba(0,0,0,0.12); min-width: 160px; }
+        .fab.open .fab-menu { display: block; }
+        .fab-menu a { display: block; padding: 8px 10px; font-size: 14px; color: #334155; border-radius: 8px; text-decoration: none; }
+        .fab-menu a:hover { background: #f1f5f9; }
+
+        /* Dark mode */
         @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #121212;
-                color: #e0e0e0;
-            }
-            
-            h1 {
-                color: #ffffff;
-            }
-            
-            .subtitle {
-                color: #bdc3c7;
-            }
-
-            .section {
-                background: #1e1e1e;
-                border-color: #333;
-            }
-
-            h2 {
-                color: #5dade2;
-            }
-            
-            th {
-                background-color: #2c2c2c;
-                color: #e0e0e0;
-            }
-            
-            tr:hover {
-                background-color: #2a2a2a;
-            }
-            
-            td {
-                border-bottom-color: #444;
-            }
-            
-            .amount {
-                color: #ffffff;
-            }
-            
-            .note {
-                background-color: #2c3e50;
-                border-left-color: #5dade2;
-                color: #e0e0e0;
-            }
-
-            .note-icon {
-                color: #5dade2;
-            }
-
-            .ad-container {
-                background: none;
-            }
+            body { background: linear-gradient(180deg, #0b1220 0%, #0f172a 40%); color: #e5e7eb; }
+            .topnav { background: rgba(15, 23, 42, 0.75); border-bottom-color: #1f2a44; }
+            .brand { color: #e5e7eb; }
+            .nav-links a:hover { background: #111827; color: #e5e7eb; }
+            .nav-links a.active { background: #0b2a4a; color: #93c5fd; }
+            header.hero { color: #fff; }
+            .section { background: #0f172a; border-color: #1f2a44; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+            .section h2 { color: #93c5fd; }
+            th { background-color: #0b1220; color: #cbd5e1; }
+            td { border-bottom-color: #1f2a44; }
+            .amount { color: #ffffff; }
+            .note { background: #0b2a4a; border-color: #164a8b; color: #dbeafe; }
+            .fab-menu { background: #0f172a; border-color: #1f2a44; }
+            .fab-menu a { color: #e5e7eb; }
+            .fab-menu a:hover { background: #111827; }
         }
     </style>
 </head>
 <body>
+    <nav class="topnav">
+        <div class="inner">
+            <a class="brand" href="#">복지 가이드</a>
+            <div class="nav-links" id="topNavLinks">
+                <a href="#basic">63% 기준</a>
+                <a href="#teen">청소년 기준</a>
+                <a href="#contact">문의</a>
+                <a href="./mohw-basic-livelihood.html">감면 제도 안내</a>
+                <a href="./2025-median-income-welfare-changes.html">제도 변경 사항</a>
+            </div>
+        </div>
+    </nav>
+    <div class="progress"><div class="bar" id="scrollProgress"></div></div>
+
     <div class="container">
-        <header>
+        <header class="hero">
             <h1>2025년 한부모가정 지원 기준</h1>
-            <p class="subtitle">기준 중위소득 가구별 지원 금액 안내</p>
+            <p>기준 중위소득 가구별 지원 금액 안내</p>
+            <div class="quick-meta">
+                <span class="chip">2025년 기준</span>
+                <span class="chip">정보 재구성·요약</span>
+            </div>
         </header>
         
-        <!-- 첫 번째 광고 -->
+        <!-- 광고 1 -->
         <div class="ad-container">
             <!-- AdSense 광고 코드 -->
             <ins class="adsbygoogle"
@@ -255,7 +161,7 @@
             </script>
         </div>
         
-        <div class="section">
+        <div class="section reveal" id="basic">
             <h2>한부모가정 지원 기준 (중위소득 63% 이하)</h2>
             <div class="table-wrapper">
                 <table>
@@ -294,12 +200,11 @@
                 </table>
             </div>
             <div class="note">
-                <span class="note-icon">※</span> 위 금액은 2025년 기준 중위소득의 63%에 해당하는 금액입니다. 
-                소수점 처리 방식에 따라 실제 공식 자료와 다소 차이가 있을 수 있습니다.
+                ※ 위 금액은 2025년 기준 중위소득의 63%에 해당하는 금액입니다. 소수점 처리 방식에 따라 실제 공식 자료와 다소 차이가 있을 수 있습니다.
             </div>
         </div>
         
-        <!-- 두 번째 광고 -->
+        <!-- 광고 2 -->
         <div class="ad-container">
             <!-- AdSense 광고 코드 -->
             <ins class="adsbygoogle"
@@ -313,7 +218,7 @@
             </script>
         </div>
         
-        <div class="section">
+        <div class="section reveal" id="teen">
             <h2>청소년 한부모가정 및 복지급여 대상 기준</h2>
             <div class="table-wrapper">
                 <table>
@@ -366,13 +271,11 @@
                 </table>
             </div>
             <div class="note">
-                <span class="note-icon">※</span> 청소년 한부모가정의 경우 중위소득 65% 이하는 복지급여 대상, 
-                72% 이하는 증명서 발급 등 완화 기준에 해당합니다. 
-                모든 금액은 보건복지부 공식 기준에 근거합니다.
+                ※ 청소년 한부모가정의 경우 중위소득 65% 이하는 복지급여 대상, 72% 이하는 증명서 발급 등 완화 기준에 해당합니다. 모든 금액은 보건복지부 공식 기준에 근거합니다.
             </div>
         </div>
         
-        <!-- 세 번째 광고 -->
+        <!-- 광고 3 -->
         <div class="ad-container">
             <!-- AdSense 광고 코드 -->
             <ins class="adsbygoogle"
@@ -385,10 +288,40 @@
                  (adsbygoogle = window.adsbygoogle || []).push({});
             </script>
         </div>
+
+        <div class="section reveal" id="contact">
+            <h2>문의 · 출처</h2>
+            <p style="margin-bottom:8px;">보건복지상담센터: 국번없이 129(무료)</p>
+            <p>이 페이지는 관련 기준을 <b>요약·재구성</b>하여 제공합니다. 최신 공식 기준은 보건복지부 안내를 참고하세요: 
+                <a href="https://www.mohw.go.kr/menu.es?mid=a10708010800" target="_blank" rel="noopener noreferrer">보건복지부 안내 페이지</a>
+            </p>
+        </div>
+
+        <footer>
+            © 2025 한부모 지원 기준 요약 · 내부 링크: <a href="./mohw-basic-livelihood.html">감면 제도 안내</a> · <a href="./2025-median-income-welfare-changes.html">제도 변경 사항</a>
+        </footer>
     </div>
+
+    <!-- Quick-jump FAB -->
+    <div class="fab" id="quickFab">
+        <button class="fab-btn" aria-label="바로가기">☰</button>
+        <div class="fab-menu" aria-label="바로가기 메뉴">
+            <a href="#basic">63% 기준</a>
+            <a href="#teen">청소년 기준</a>
+            <a href="#contact">문의/출처</a>
+            <a href="#">맨 위로</a>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Unfilled AdSense ads have `data-ad-status="unfilled"`, so we can hide them.
+            // Set canonical to current URL if empty
+            const canonical = document.getElementById('canonical-link');
+            if (canonical && (!canonical.getAttribute('href') || canonical.getAttribute('href') === '')) {
+                canonical.setAttribute('href', window.location.origin + window.location.pathname);
+            }
+
+            // Unfilled AdSense ads: hide container to avoid blank gaps.
             document.querySelectorAll('ins.adsbygoogle').forEach(adSlot => {
                 const observer = new MutationObserver(() => {
                     if (adSlot.getAttribute('data-ad-status') === 'unfilled') {
@@ -399,6 +332,54 @@
                     }
                 });
                 observer.observe(adSlot, { attributes: true, attributeFilter: ['data-ad-status'] });
+            });
+
+            // Scroll progress bar
+            const progressBar = document.getElementById('scrollProgress');
+            const updateProgress = () => {
+                const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                if (progressBar) progressBar.style.width = progress + '%';
+            };
+            updateProgress();
+            window.addEventListener('scroll', updateProgress, { passive: true });
+
+            // Section reveal
+            const sections = document.querySelectorAll('.section.reveal');
+            const revObs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+            }, { threshold: 0.1 });
+            sections.forEach(s => revObs.observe(s));
+
+            // Active nav highlight for anchors
+            const nav = document.getElementById('topNavLinks');
+            const anchorLinks = Array.from(nav.querySelectorAll('a')).filter(a => a.getAttribute('href') && a.getAttribute('href').startsWith('#'));
+            const idToLink = new Map(anchorLinks.map(a => [a.getAttribute('href').replace('#',''), a]));
+            const secObs = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const id = entry.target.id;
+                    const link = idToLink.get(id);
+                    if (!link) return;
+                    if (entry.isIntersecting) {
+                        anchorLinks.forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                    }
+                });
+            }, { rootMargin: '-40% 0px -50% 0px', threshold: 0.01 });
+            document.querySelectorAll('section[id], .section[id]').forEach(sec => secObs.observe(sec));
+
+            // FAB toggle
+            const fab = document.getElementById('quickFab');
+            const fabBtn = fab ? fab.querySelector('.fab-btn') : null;
+            if (fabBtn) {
+                fabBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fab.classList.toggle('open');
+                });
+            }
+            document.addEventListener('click', (e) => {
+                if (fab && !fab.contains(e.target)) fab.classList.remove('open');
             });
         });
     </script>

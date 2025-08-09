@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2025년 기준 중위소득 및 기초생활보장 제도 변경 사항</title>
+  <meta name="description" content="2025년 기준 중위소득 인상, 급여별 선정기준, 제도 개선(자동차재산·부양의무자·근로소득 공제), 급여별 변화, 제도 개요, 적용 사업, 기대 효과를 한 페이지로 정리." />
+  <link rel="canonical" id="canonical-link" href="" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3505313580947440" crossorigin="anonymous"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(180deg, #f0f4ff 0%, #f8f9fa 40%);
+      color: #2d3748;
+      line-height: 1.7;
+      padding-top: 64px; /* offset for fixed nav */
+    }
+
+    /* Top fixed nav */
+    .topnav { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); border-bottom: 1px solid #e9eef6; z-index: 1000; }
+    .topnav .inner { max-width: 1160px; margin: 0 auto; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+    .brand { font-weight: 700; color: #1f2937; text-decoration: none; }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a { color: #475569; text-decoration: none; font-size: 14px; padding: 8px 10px; border-radius: 8px; }
+    .nav-links a:hover { background: #f1f5f9; color:#0f172a; }
+    .nav-links a.active { background: #e8f0ff; color: #1d4ed8; }
+
+    .progress { position: fixed; top: 56px; left: 0; right: 0; height: 3px; z-index: 1000; }
+    .progress .bar { width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #22d3ee); transition: width 0.15s linear; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 20px; }
+
+    header.hero {
+      background: linear-gradient(135deg, #5b8def 0%, #2ec5ff 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 36px 28px;
+      box-shadow: 0 12px 40px rgba(43, 99, 221, 0.25);
+      margin: 18px 0 26px;
+      position: relative;
+      overflow: hidden;
+    }
+    header.hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(1200px 400px at 100% -10%, rgba(255,255,255,0.25), transparent 60%);
+      pointer-events: none;
+    }
+    .hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
+    .hero p { margin-top: 8px; opacity: 0.95; }
+
+    .quick-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.28); padding: 6px 10px; border-radius: 999px; font-size: 13px; backdrop-filter: blur(6px); }
+
+    .hl-btn { position: absolute; right: 16px; bottom: 16px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 8px 12px; border-radius: 999px; font-size: 12px; cursor: pointer; }
+    .hl-btn:hover { background: rgba(255,255,255,0.28); }
+
+    .section { background: #fff; border-radius: 16px; padding: 24px; margin: 18px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e9eef6; scroll-margin-top: 72px; }
+    .section h2 { font-size: 20px; color: #2563eb; margin-bottom: 10px; }
+    .section .sub { color: #64748b; font-size: 14px; margin-bottom: 10px; }
+
+    /* Reveal animation */
+    .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    .ad-container { margin: 28px 0; text-align: center; min-height: 100px; }
+
+    .list { margin-left: 18px; }
+    .list li { margin: 6px 0; }
+
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid #e5e7eb; text-align: left; }
+    th { background: #f8fafc; color: #475569; font-weight: 500; }
+    tr:hover { background: #f9fafb; }
+
+    .note { background: #eef6ff; border: 1px solid #dbeafe; color: #0f3d8c; border-left: 4px solid #3b82f6; padding: 12px; border-radius: 10px; font-size: 13px; margin-top: 12px; }
+
+    /* Highlight mode */
+    body.highlight-on .section strong { background: linear-gradient(transparent 60%, rgba(251, 191, 36, .45) 60%); box-decoration-break: clone; }
+
+    footer { margin: 26px 0; color: #6b7280; font-size: 13px; text-align: center; }
+
+    /* FAB quick-jump */
+    .fab { position: fixed; right: 18px; bottom: 18px; z-index: 999; }
+    .fab-btn { width: 48px; height: 48px; border-radius: 50%; background: #2563eb; color: #fff; border: none; box-shadow: 0 8px 24px rgba(37,99,235,0.35); cursor: pointer; font-size: 20px; }
+    .fab-menu { position: absolute; right: 0; bottom: 56px; display: none; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 6px; box-shadow: 0 14px 34px rgba(0,0,0,0.12); min-width: 180px; }
+    .fab.open .fab-menu { display: block; }
+    .fab-menu a { display: block; padding: 8px 10px; font-size: 14px; color: #334155; border-radius: 8px; text-decoration: none; }
+    .fab-menu a:hover { background: #f1f5f9; }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      body { background: linear-gradient(180deg, #0b1220 0%, #0f172a 40%); color: #e5e7eb; }
+      .topnav { background: rgba(15, 23, 42, 0.75); border-bottom-color: #1f2a44; }
+      .brand { color: #e5e7eb; }
+      .nav-links a:hover { background: #111827; color: #e5e7eb; }
+      .nav-links a.active { background: #0b2a4a; color: #93c5fd; }
+      header.hero { color: #fff; }
+      .section { background: #0f172a; border-color: #1f2a44; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+      .section h2 { color: #93c5fd; }
+      th { background: #0b1220; color: #cbd5e1; }
+      td { border-bottom-color: #1f2a44; }
+      .note { background: #0b2a4a; border-color: #164a8b; color: #dbeafe; }
+      .fab-menu { background: #0f172a; border-color: #1f2a44; }
+      .fab-menu a { color: #e5e7eb; }
+      .fab-menu a:hover { background: #111827; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <div class="inner">
+      <a class="brand" href="#">복지 변화 한눈에</a>
+      <div class="nav-links" id="topNavLinks">
+        <a href="./medianincome.html">한부모 기준</a>
+        <a href="./mohw-basic-livelihood.html">감면 제도</a>
+        <a href="#sec1">개요</a>
+        <a href="#sec2">중위소득</a>
+        <a href="#sec3">제도 개선</a>
+        <a href="#sec4">급여별 변화</a>
+        <a href="#sec5">제도 개요</a>
+        <a href="#sec6">활용 사업</a>
+        <a href="#sec7">기대 효과</a>
+      </div>
+    </div>
+  </nav>
+  <div class="progress"><div class="bar" id="scrollProgress"></div></div>
+
+  <div class="container">
+    <header class="hero">
+      <h1>2025년 기준 중위소득 및 기초생활보장 제도 변경 사항 – 완전판 정리</h1>
+      <p>2025년 기준 중위소득 인상과 기초생활보장 제도 주요 변경 사항을 한 페이지로 정리했습니다.</p>
+      <div class="quick-meta">
+        <span class="chip">2025년</span>
+        <span class="chip">중위소득·급여기준</span>
+        <span class="chip">정책 변경 요약</span>
+      </div>
+      <button id="toggleHighlight" class="hl-btn" type="button">변경사항 하이라이트</button>
+    </header>
+
+    <!-- 광고 1 -->
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3505313580947440" data-ad-slot="8596674653" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <section class="section reveal" id="sec1">
+      <h2>1. 정책 개요 및 결정 배경</h2>
+      <p>보건복지부는 2024년 7월 25일 제73차 중앙생활보장위원회를 열어 <strong>2025년도 기준 중위소득과 기초생활보장 급여별 선정기준·최저보장수준</strong>을 심의·의결했습니다.<br />
+      이번 결정은 <strong>현 정부 출범 이후 3년 연속 역대 최대 수준 인상</strong>이며,<br />
+      ‘약자복지 강화’ 정책 기조에 맞춰 저소득층 생활 안정과 <strong>수급 사각지대 해소</strong>를 목표로 하고 있습니다.</p>
+    </section>
+
+    <section class="section reveal" id="sec2">
+      <h2>2. 기준 중위소득 인상 (2015년 이후 최대폭)</h2>
+      <ul class="list">
+        <li><strong>4인 가구</strong>: 572만 9,913원 → <strong>609만 7,773원</strong> (+6.42%)</li>
+        <li><strong>1인 가구</strong>: 222만 8,445원 → <strong>239만 2,013원</strong> (+7.34%)</li>
+        <li>기준 중위소득은 기초생활보장제도와 13개 부처 74개 복지사업(국민취업지원제도, 국가장학금, 행복주택 등)의 수급 선정 기준으로 활용됩니다.</li>
+      </ul>
+
+      <h3 style="margin-top:14px; font-size:16px; color:#334155;">2025년도 급여별 선정기준 (기준 중위소득 대비)</h3>
+      <ul class="list">
+        <li><strong>생계</strong>: 32%</li>
+        <li><strong>의료</strong>: 40%</li>
+        <li><strong>주거</strong>: 48%</li>
+        <li><strong>교육</strong>: 50%</li>
+      </ul>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>가구원</th>
+              <th>생계급여</th>
+              <th>의료급여</th>
+              <th>주거급여</th>
+              <th>교육급여</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1인</td><td>76만 5,444</td><td>95만 6,805</td><td>114만 8,166</td><td>119만 6,007</td></tr>
+            <tr><td>2인</td><td>125만 8,451</td><td>157만 3,063</td><td>188만 7,676</td><td>196만 6,329</td></tr>
+            <tr><td>3인</td><td>160만 8,113</td><td>201만 141</td><td>241만 2,169</td><td>251만 2,677</td></tr>
+            <tr><td>4인</td><td>195만 1,287</td><td>243만 9,109</td><td>292만 6,931</td><td>304만 8,887</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 광고 2 -->
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3505313580947440" data-ad-slot="8596674653" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <section class="section reveal" id="sec3">
+      <h2>3. 주요 제도 개선 내용</h2>
+
+      <h3 style="margin-top:6px; font-size:16px; color:#334155;">(1) 자동차재산 기준 완화</h3>
+      <ul class="list">
+        <li><strong>현행</strong>: 1,600cc 미만 & 200만원 미만 차량만 일반재산 환산율(4.17%) 적용</li>
+        <li><strong>개정</strong>: 2,000cc 미만 & 500만원 미만 차량까지 확대</li>
+        <li><strong>효과</strong>: 차량가액 전액이 소득으로 산정돼 탈락하는 사례 방지</li>
+      </ul>
+      <p class="note"><strong>사례</strong><br />
+        B씨(4인 가구, 월 소득 150만원, 차량 1,999cc·450만원)<br />
+        기존: 차량가액 100% 소득 환산 → 소득인정액 600만원(탈락)<br />
+        개정: 차량가액 4.17%만 환산 → 소득인정액 169만원(수급 가능, 월 26만원 지원)
+      </p>
+
+      <h3 style="margin-top:16px; font-size:16px; color:#334155;">(2) 부양의무자 기준 완화</h3>
+      <ul class="list">
+        <li>연소득: 1억원 → <strong>1.3억원</strong></li>
+        <li>일반재산: 9억원 → <strong>12억원</strong></li>
+      </ul>
+
+      <h3 style="margin-top:16px; font-size:16px; color:#334155;">(3) 노인 근로·사업소득 추가공제 확대</h3>
+      <ul class="list">
+        <li>기존: 75세 이상만 ‘20만원 + 30%’ 공제</li>
+        <li><strong>개정</strong>: <strong>65세 이상</strong>으로 확대</li>
+      </ul>
+      <p class="note"><strong>사례</strong><br />
+        C씨(1인 가구, 월 소득 100만원)<br />
+        기존: 30% 공제 → 소득인정액 70만원 → 생계급여 1.3만원<br />
+        개정: 20만원+30% 공제 → 소득인정액 56만원 → 생계급여 20.5만원
+      </p>
+    </section>
+
+    <section class="section reveal" id="sec4">
+      <h2>4. 급여별 세부 변화</h2>
+
+      <h3 style="margin-top:6px; font-size:16px; color:#334155;">■ 생계급여</h3>
+      <ul class="list">
+        <li>최저보장수준(4인): 183만 3,572원 → <strong>195만 1,287원</strong></li>
+        <li>약 7만 1천 명 신규 수급 예상</li>
+      </ul>
+
+      <h3 style="margin-top:16px; font-size:16px; color:#334155;">■ 주거급여</h3>
+      <ul class="list">
+        <li><strong>임차가구 기준임대료 인상</strong>: 1.1~2.4만원 (3.2~7.8%)
+          <ul class="list">
+            <li>예: 서울 1인 35.2만원(+1.1만원), 4인 54.5만원(+1.8만원)</li>
+          </ul>
+        </li>
+        <li><strong>자가가구 수선비 인상</strong>(29%)
+          <ul class="list">
+            <li>경보수: 457만원 → 590만원</li>
+            <li>중보수: 849만원 → 1,095만원</li>
+            <li>대보수: 1,241만원 → 1,601만원</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3 style="margin-top:16px; font-size:16px; color:#334155;">■ 교육급여</h3>
+      <ul class="list">
+        <li><strong>교육활동지원비 인상</strong>
+          <ul class="list">
+            <li>초: 48만 7천원(+5.6%)</li>
+            <li>중: 67만 9천원(+3.8%)</li>
+            <li>고: 76만 8천원(+5.6%)</li>
+          </ul>
+        </li>
+        <li>고교 무상교육 제외 대상: 입학금·수업료·교과서비 전액 지원</li>
+      </ul>
+
+      <h3 style="margin-top:16px; font-size:16px; color:#334155;">■ 의료급여</h3>
+      <ul class="list">
+        <li><strong>본인부담 정률제 도입</strong>
+          <ul class="list">
+            <li>의원 4%·6%·8%, 약국 2%</li>
+            <li>단, 2.5만원 이하 구간은 정액제 유지, 약국 상한 5천원</li>
+          </ul>
+        </li>
+        <li><strong>의료이용 관리 강화</strong>
+          <ul class="list">
+            <li>연 365회 초과 외래진료 시 본인부담 상향(중증·희귀질환자 예외)</li>
+            <li>외래·입원·투약 급여일수 분리 관리</li>
+          </ul>
+        </li>
+        <li><strong>건강생활유지비 인상</strong>: 월 6천원 → <strong>1.2만원</strong></li>
+        <li>부양비 제도 개선 검토: 실제 이전되지 않은 부양비 소득 산정 제외</li>
+      </ul>
+    </section>
+
+    <!-- 광고 3 -->
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3505313580947440" data-ad-slot="8596674653" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <section class="section reveal" id="sec5">
+      <h2>5. 기초생활보장제도 개요</h2>
+      <ul class="list">
+        <li>목적: 생활이 어려운 사람에게 필요한 급여 제공, 최저생활 보장, 자립 유도</li>
+        <li>수급자 선정 기준:
+          <ul class="list">
+            <li>1) 소득인정액이 기준 중위소득 일정 비율 이하</li>
+            <li>2) 부양의무자 기준 충족(주거·교육급여는 폐지, 생계급여는 예외 기준 외 폐지)</li>
+          </ul>
+        </li>
+        <li>급여 종류: 생계·의료·주거·교육·자활·장제·해산(총 7종)</li>
+        <li>2024년 예산: 약 20조원(국비 기준)
+          <ul class="list">
+            <li>생계 7.5조, 의료 8.9조, 주거 2.7조, 교육 0.2조 등</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section reveal" id="sec6">
+      <h2>6. 기준 중위소득 활용 사업 (예시)</h2>
+      <p>총 74개 사업에 적용(고용·교육·보훈·국토·농림·산림·문체·법무·복지·질병청·여가·통일·해수부 등)</p>
+      <ul class="list">
+        <li>국민취업지원제도</li>
+        <li>국가장학금</li>
+        <li>행복주택 공급</li>
+        <li>기초생활 생계·의료·주거·교육급여</li>
+        <li>장애인연금</li>
+        <li>산림복지서비스 이용권</li>
+        <li>예술인 창작준비금</li>
+        <li>아이돌봄 서비스</li>
+      </ul>
+    </section>
+
+    <section class="section reveal" id="sec7">
+      <h2>7. 기대 효과</h2>
+      <ul class="list">
+        <li>약 7만여 명 신규 생계급여 수급 가능</li>
+        <li>생계·의료·주거·교육 전 분야 지원 확대</li>
+        <li>자동차·부양의무자·근로소득 공제 완화로 사각지대 축소</li>
+        <li>의료 남용 억제와 필수 지원의 균형 강화</li>
+      </ul>
+    </section>
+
+    <footer>
+      © 2025 기준 중위소득 · 제도 변경 요약 · 내부 링크: <a href="./medianincome.html">한부모 기준</a> · <a href="./mohw-basic-livelihood.html">감면 제도</a>
+    </footer>
+  </div>
+
+  <!-- Quick-jump FAB -->
+  <div class="fab" id="quickFab">
+    <button class="fab-btn" aria-label="바로가기">☰</button>
+    <div class="fab-menu" aria-label="바로가기 메뉴">
+      <a href="#sec1">개요</a>
+      <a href="#sec2">중위소득</a>
+      <a href="#sec3">제도 개선</a>
+      <a href="#sec4">급여별 변화</a>
+      <a href="#sec5">제도 개요</a>
+      <a href="#sec6">활용 사업</a>
+      <a href="#sec7">기대 효과</a>
+      <a href="#">맨 위로</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set canonical to current URL if empty
+      const canonical = document.getElementById('canonical-link');
+      if (canonical && (!canonical.getAttribute('href') || canonical.getAttribute('href') === '')) {
+        canonical.setAttribute('href', window.location.origin + window.location.pathname);
+      }
+
+      // Hide unfilled AdSense slots
+      document.querySelectorAll('ins.adsbygoogle').forEach(adSlot => {
+        const observer = new MutationObserver(() => {
+          if (adSlot.getAttribute('data-ad-status') === 'unfilled') {
+            const adContainer = adSlot.closest('.ad-container');
+            if (adContainer) adContainer.style.display = 'none';
+          }
+        });
+        observer.observe(adSlot, { attributes: true, attributeFilter: ['data-ad-status'] });
+      });
+
+      // Scroll progress bar
+      const progressBar = document.getElementById('scrollProgress');
+      const updateProgress = () => {
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (progressBar) progressBar.style.width = progress + '%';
+      };
+      updateProgress();
+      window.addEventListener('scroll', updateProgress, { passive: true });
+
+      // Section reveal
+      const sections = document.querySelectorAll('.section.reveal');
+      const revObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+      }, { threshold: 0.1 });
+      sections.forEach(s => revObs.observe(s));
+
+      // Active nav highlight for anchors
+      const nav = document.getElementById('topNavLinks');
+      const anchorLinks = Array.from(nav.querySelectorAll('a')).filter(a => a.getAttribute('href') && a.getAttribute('href').startsWith('#'));
+      const idToLink = new Map(anchorLinks.map(a => [a.getAttribute('href').replace('#',''), a]));
+      const secObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const id = entry.target.id;
+          const link = idToLink.get(id);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            anchorLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-40% 0px -50% 0px', threshold: 0.01 });
+      document.querySelectorAll('section[id]').forEach(sec => secObs.observe(sec));
+
+      // Highlight toggle
+      const toggleBtn = document.getElementById('toggleHighlight');
+      toggleBtn && toggleBtn.addEventListener('click', () => {
+        document.body.classList.toggle('highlight-on');
+      });
+
+      // FAB toggle
+      const fab = document.getElementById('quickFab');
+      const fabBtn = fab ? fab.querySelector('.fab-btn') : null;
+      fabBtn && fabBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fab.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (fab && !fab.contains(e.target)) fab.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html> 
