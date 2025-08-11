@@ -30,8 +30,8 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 		<title>{title}</title>
 
 		<!-- Google Adsense (prod only) -->
-		{import.meta.env.PROD && (
-			<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3505313580947440" crossorigin="anonymous"></script>
+		{import.meta.env.PROD && adClient && (
+			<script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`} crossorigin="anonymous"></script>
 		)}
 
 		<script is:inline>
