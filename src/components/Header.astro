@@ -63,7 +63,7 @@
             const lightIcon = darkModeToggle.querySelector('.light-icon');
             const darkIcon = darkModeToggle.querySelector('.dark-icon');
     
-            const applyTheme = (theme: 'dark' | 'light') => {
+                const applyTheme = (theme) => {
                 if (!lightIcon || !darkIcon) return;
                 if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
@@ -74,7 +74,7 @@
                     lightIcon.classList.remove('hidden');
                     darkIcon.classList.add('hidden');
                 }
-            };
+                };
     
             darkModeToggle.addEventListener('click', function() {
                 const isDarkMode = document.documentElement.classList.contains('dark');
@@ -84,7 +84,8 @@
             });
             
             // 초기 로드 시 테마 적용
-            const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' || 'light';
+            const saved = localStorage.getItem('theme');
+            const savedTheme = saved === 'dark' || saved === 'light' ? saved : 'light';
             applyTheme(savedTheme);
         }
     });

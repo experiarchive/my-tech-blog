@@ -353,7 +353,7 @@ const sectionsWithAd = sections.map((section) => {
         event.preventDefault();
 
         // href 속성에서 #을 제외한 ID 값을 가져옵니다.
-        const targetId = (link as HTMLAnchorElement).getAttribute('href')?.substring(1);
+        const targetId = link.getAttribute('href')?.substring(1);
         if (!targetId) return;
 
         // 해당 ID를 가진 요소를 찾습니다.

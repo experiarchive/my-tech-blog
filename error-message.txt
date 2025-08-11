@@ -1,0 +1,8 @@
+2025-ticket-discount-voucher-guide:23  Uncaught SyntaxError: Unexpected identifier 'as'
+2025-ticket-discount-voucher-guide:112 [Intervention] Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113
+2025-ticket-discount-voucher-guide:74  Uncaught SyntaxError: Unexpected identifier 'as'
+2025-ticket-discount-voucher-guide:125  Uncaught SyntaxError: Unexpected identifier 'as'
+2025-ticket-discount-voucher-guide:1  Attestation check for Attribution Reporting on https://www.googleadservices.com failed.
+2025-ticket-discount-voucher-guide#google_vignette:1  Blocked aria-hidden on a <body> element because it would hide the entire accessibility tree from assistive technology users. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden. <body class=​"bg-white text-gray-800 dark:​bg-gray-900 dark:​text-gray-200" aria-hidden=​"false" style=​"padding:​ 0px;​">​…​</body>​
+2025-ticket-discount-voucher-guide#google_vignette:1  Attestation check for Attribution Reporting on https://www.googleadservices.com failed.
+googleads.g.doubleclick.net/pagead/html/r20250805/r20190131/zrt_lookup_fy2021.html#RS-0-&adk=1812271808&client=ca-pub-3505313580947440&fa=8&ifi=2&uci=a!2:1  Blocked aria-hidden on a <body> element because it would hide the entire accessibility tree from assistive technology users. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden. <body marginwidth=​"0" marginheight=​"0" aria-hidden=​"true">​…​</body>​

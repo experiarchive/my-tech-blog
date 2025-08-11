@@ -19,7 +19,7 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
          data-full-width-responsive="true"></ins>
     <script define:vars={{slot}}>
       // 광고 미게재(unfilled) 또는 로드 실패 시 외부 래퍼(.ad-wrapper)를 자동 숨김
-      const ins = document.currentScript?.previousElementSibling as HTMLElement | null;
+      const ins = document.currentScript ? document.currentScript.previousElementSibling : null;
       const wrapper = ins?.closest('.ad-wrapper') || ins?.parentElement;
 
       const hideWrapper = () => {
@@ -46,7 +46,7 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 
       // adsbygoogle 초기화 시도
       setTimeout(() => {
-        try { (adsbygoogle = (window as any).adsbygoogle || []).push({}); } catch (e) {}
+        try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
       }, 50);
 
       // 폴링: 일정 시간 내에 채워지지 않으면 숨김
