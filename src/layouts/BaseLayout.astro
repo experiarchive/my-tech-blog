@@ -30,9 +30,7 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 		<title>{title}</title>
 
 		<!-- Google Adsense (prod only) -->
-		{import.meta.env.PROD && adClient && (
-			<script async src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adClient}`} crossorigin="anonymous"></script>
-		)}
+		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3505313580947440" crossorigin="anonymous"></script>
 
 		<script is:inline>
 			// 다크 모드 깜빡임 방지 스크립트
