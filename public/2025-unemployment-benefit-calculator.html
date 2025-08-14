@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2025 실업급여(구직급여) 맞춤 계산기</title>
+  <meta name="description" content="2025년 기준 실업급여(구직급여) 계산기. 연령, 피보험기간, 급여 정보를 입력하여 예상 수급액과 지급기간을 간편하게 계산하세요. 하한/상한액, 반복수급 감액, 수급 자격 요건을 모두 반영한 정확한 계산 도구입니다." />
+  <link rel="canonical" id="canonical-link" href="" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3505313580947440" crossorigin="anonymous"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(180deg, #f0f4ff 0%, #f8f9fa 40%);
+      color: #2d3748;
+      line-height: 1.7;
+      padding-top: 64px; /* offset for fixed nav */
+    }
+
+    /* Top fixed nav */
+    .topnav { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: rgba(255,255,255,0.88); backdrop-filter: blur(8px); border-bottom: 1px solid #e9eef6; z-index: 1000; }
+    .topnav .inner { max-width: 1160px; margin: 0 auto; height: 56px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+    .brand { font-weight: 700; color: #1f2937; text-decoration: none; }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a { color: #475569; text-decoration: none; font-size: 14px; padding: 8px 10px; border-radius: 8px; }
+    .nav-links a:hover { background: #f1f5f9; color:#0f172a; }
+    .nav-links a.active { background: #e8f0ff; color: #1d4ed8; }
+
+    .progress { position: fixed; top: 56px; left: 0; right: 0; height: 3px; z-index: 1000; }
+    .progress .bar { width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #22d3ee); transition: width 0.15s linear; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 20px; }
+
+    header.hero {
+      background: linear-gradient(135deg, #5b8def 0%, #2ec5ff 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 36px 28px;
+      box-shadow: 0 12px 40px rgba(43, 99, 221, 0.25);
+      margin: 18px 0 26px;
+      position: relative;
+      overflow: hidden;
+    }
+    header.hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(1200px 400px at 100% -10%, rgba(255,255,255,0.25), transparent 60%);
+      pointer-events: none;
+    }
+    .hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.3px; }
+    .hero p { margin-top: 8px; opacity: 0.95; }
+
+    .quick-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.28); padding: 6px 10px; border-radius: 999px; font-size: 13px; backdrop-filter: blur(6px); }
+
+    .section { background: #fff; border-radius: 16px; padding: 24px; margin: 18px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e9eef6; scroll-margin-top: 72px; }
+    .section h2 { font-size: 20px; color: #2563eb; margin-bottom: 10px; }
+    .section h3 { font-size: 16px; color: #334155; margin-top: 16px; margin-bottom: 8px; }
+
+    /* Reveal animation */
+    .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    .ad-container { margin: 28px 0; text-align: center; min-height: 100px; }
+
+    /* Input styles */
+    .input { 
+      width: 100%; 
+      border: 1px solid #e5e7eb; 
+      border-radius: 0.75rem; 
+      padding: 0.5rem 0.75rem; 
+      font-size: 14px;
+    }
+    .input:focus { 
+      outline: none; 
+      box-shadow: 0 0 0 4px rgba(59,130,246,0.2); 
+      border-color: #93c5fd; 
+    }
+
+    /* Grid and layout */
+    .grid { display: grid; gap: 18px; }
+    .grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+    .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    
+    @media (max-width: 768px) {
+      .grid-cols-2, .grid-cols-3 { grid-template-columns: 1fr; }
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group label { font-size: 14px; color: #6b7280; font-weight: 500; }
+
+    /* Button styles */
+    .btn { 
+      padding: 8px 16px; 
+      border-radius: 12px; 
+      border: none; 
+      font-size: 14px; 
+      cursor: pointer; 
+      transition: all 0.2s;
+    }
+    .btn-secondary { 
+      background: #f3f4f6; 
+      color: #374151; 
+    }
+    .btn-secondary:hover { 
+      background: #e5e7eb; 
+    }
+
+    /* Result cards */
+    .result-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .result-card h3 { 
+      color: #1f2937; 
+      font-size: 16px; 
+      margin-bottom: 12px; 
+    }
+    .result-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .result-desc {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    /* Status indicators */
+    .status-eligible { color: #059669; font-weight: 600; }
+    .status-not-eligible { color: #dc2626; font-weight: 600; }
+    .status-warning { color: #d97706; font-weight: 600; }
+
+    /* Validation */
+    .validation-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    /* Note boxes */
+    .note { 
+      background: #eef6ff; 
+      border: 1px solid #dbeafe; 
+      color: #0f3d8c; 
+      border-left: 4px solid #3b82f6; 
+      padding: 12px; 
+      border-radius: 10px; 
+      font-size: 13px; 
+      margin-top: 12px; 
+    }
+
+    /* Calculation details */
+    .calc-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: 14px;
+    }
+    .calc-detail:last-child { border-bottom: none; }
+    .calc-label { color: #6b7280; }
+    .calc-value { font-weight: 600; color: #1f2937; }
+
+    /* Limit info box */
+    .limit-info {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 12px;
+      margin: 8px 0;
+    }
+
+    footer { margin: 26px 0; color: #6b7280; font-size: 13px; text-align: center; }
+
+    /* FAB quick-jump */
+    .fab { position: fixed; right: 18px; bottom: 18px; z-index: 999; }
+    .fab-btn { width: 48px; height: 48px; border-radius: 50%; background: #2563eb; color: #fff; border: none; box-shadow: 0 8px 24px rgba(37,99,235,0.35); cursor: pointer; font-size: 20px; }
+    .fab-menu { position: absolute; right: 0; bottom: 56px; display: none; background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 6px; box-shadow: 0 14px 34px rgba(0,0,0,0.12); min-width: 180px; }
+    .fab.open .fab-menu { display: block; }
+    .fab-menu a { display: block; padding: 8px 10px; font-size: 14px; color: #334155; border-radius: 8px; text-decoration: none; }
+    .fab-menu a:hover { background: #f1f5f9; }
+
+    /* Dark mode */
+    @media (prefers-color-scheme: dark) {
+      body { background: linear-gradient(180deg, #0b1220 0%, #0f172a 40%); color: #e5e7eb; }
+      .topnav { background: rgba(15, 23, 42, 0.75); border-bottom-color: #1f2a44; }
+      .brand { color: #e5e7eb; }
+      .nav-links a:hover { background: #111827; color: #e5e7eb; }
+      .nav-links a.active { background: #0b2a4a; color: #93c5fd; }
+      header.hero { color: #fff; }
+      .section, .result-card { background: #0f172a; border-color: #1f2a44; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+      .section h2 { color: #93c5fd; }
+      .section h3 { color: #cbd5e1; }
+      .input { background: #0f172a; border-color: #1f2a44; color: #e5e7eb; }
+      .input:focus { border-color: #3b82f6; }
+      .btn-secondary { background: #1f2937; color: #e5e7eb; }
+      .btn-secondary:hover { background: #374151; }
+      .calc-detail { border-bottom-color: #1f2a44; }
+      .calc-label { color: #9aa4b2; }
+      .calc-value { color: #e5e7eb; }
+      .result-value { color: #e5e7eb; }
+      .result-desc { color: #9aa4b2; }
+      .limit-info { background: #0b1220; border-color: #1f2a44; }
+      .note { background: #0b2a4a; border-color: #164a8b; color: #dbeafe; }
+      .validation-error { background: #1f1016; border-color: #7c2d12; color: #fca5a5; }
+      .fab-menu { background: #0f172a; border-color: #1f2a44; }
+      .fab-menu a { color: #e5e7eb; }
+      .fab-menu a:hover { background: #111827; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <div class="inner">
+      <a class="brand" href="/">실업급여 계산기</a>
+      <div class="nav-links" id="topNavLinks">
+        <a href="./2025-median-income-welfare-changes.html">중위소득 변화</a>
+        <a href="./mohw-basic-livelihood.html">감면 제도</a>
+        <a href="#input">입력</a>
+        <a href="#result">결과</a>
+        <a href="#guide">가이드</a>
+      </div>
+    </div>
+  </nav>
+  <div class="progress"><div class="bar" id="scrollProgress"></div></div>
+
+  <div class="container">
+    <header class="hero">
+      <h1>2025 실업급여(구직급여) 맞춤 계산기</h1>
+      <p>2025년 기준으로 실업급여 수급액과 지급기간을 정확하게 계산해보세요. 하한/상한액, 반복수급 감액률, 수급 자격 요건을 모두 반영합니다.</p>
+      <div class="quick-meta">
+        <span class="chip">2025년 기준</span>
+        <span class="chip">하한 64,192원/일</span>
+        <span class="chip">상한 66,000원/일</span>
+        <span class="chip">반복수급 감액 적용</span>
+      </div>
+    </header>
+
+    <!-- 광고 1 -->
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3505313580947440" data-ad-slot="8596674653" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- 입력 섹션 -->
+    <section class="section reveal" id="input">
+      <h2>1. 정보 입력</h2>
+      
+      <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+        <button onclick="fillSampleA()" class="btn btn-secondary">사례 A (하한 적용)</button>
+        <button onclick="fillSampleB()" class="btn btn-secondary">사례 B (상한+감액)</button>
+        <button onclick="resetAll()" class="btn btn-secondary">초기화</button>
+      </div>
+
+      <div class="grid grid-cols-2">
+        <!-- 기본정보 -->
+        <div>
+          <h3>기본정보</h3>
+          <div class="grid grid-cols-2" style="gap: 12px; margin-top: 8px;">
+            <div class="form-group">
+              <label>연령(만 나이)</label>
+              <input type="number" min="0" id="age" class="input" placeholder="예: 35" />
+            </div>
+            <div class="form-group">
+              <label>이직일(퇴사일)</label>
+              <input type="date" id="sepDate" class="input" />
+            </div>
+            <div class="form-group" style="grid-column: span 2;">
+              <label>이직 사유</label>
+              <select id="reason" class="input">
+                <option value="비자발적">비자발적</option>
+                <option value="정당한 자발적">정당한 자발적</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>최근 18개월 유급일수</label>
+              <input type="number" min="0" id="insuredDays18m" class="input" placeholder="예: 200" />
+            </div>
+            <div class="form-group">
+              <label style="display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" id="isDisabled" />
+                장애인 해당
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 급여정보 -->
+        <div>
+          <h3>급여정보 (퇴직 전 최근 3개월, 세전)</h3>
+          <div class="grid grid-cols-2" style="gap: 12px; margin-top: 8px;">
+            <div class="form-group">
+              <label>A월 급여총액</label>
+              <input type="number" min="0" id="wageA" class="input" placeholder="예: 2500000" />
+            </div>
+            <div class="form-group">
+              <label>B월 급여총액</label>
+              <input type="number" min="0" id="wageB" class="input" placeholder="예: 2500000" />
+            </div>
+            <div class="form-group">
+              <label>C월 급여총액</label>
+              <input type="number" min="0" id="wageC" class="input" placeholder="예: 2500000" />
+            </div>
+            <div class="form-group">
+              <label>3개월 총일수(달력일수)</label>
+              <input type="number" min="0" id="totalCalDays" class="input" placeholder="예: 92" />
+            </div>
+            <div class="form-group">
+              <label>주 소정근로시간</label>
+              <input type="number" min="0" id="weeklyHours" class="input" placeholder="예: 40" />
+            </div>
+            <div class="form-group" id="shortTimeGroup" style="display: none; grid-column: span 2;">
+              <label>(주 15시간 미만) 계속근로 개월수</label>
+              <input type="number" min="0" id="shortTimeMonths" class="input" placeholder="3개월 이상이면 적용대상" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 피보험기간 및 반복수급 -->
+      <div style="margin-top: 24px;">
+        <h3>피보험기간 및 반복수급</h3>
+        <div class="grid grid-cols-3" style="gap: 12px; margin-top: 8px;">
+          <div class="form-group">
+            <label>피보험기간(년)</label>
+            <input type="number" min="0" id="insuredYears" class="input" placeholder="예: 2" />
+          </div>
+          <div class="form-group">
+            <label>피보험기간(개월)</label>
+            <input type="number" min="0" max="11" id="insuredMonths" class="input" placeholder="0~11" />
+          </div>
+          <div class="form-group">
+            <label>최근 5년 수급 횟수</label>
+            <input type="number" min="0" id="repeatCount" class="input" placeholder="예: 0" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 유효성 검사 결과 -->
+      <div id="validationErrors" style="display: none;"></div>
+    </section>
+
+    <!-- 광고 2 -->
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3505313580947440" data-ad-slot="8596674653" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- 결과 섹션 -->
+    <section class="section reveal" id="result">
+      <h2>2. 계산 결과</h2>
+      
+      <div class="grid grid-cols-3">
+        <!-- 자동 계산 -->
+        <div class="result-card">
+          <h3>계산 과정</h3>
+          <div id="calculationDetails">
+            <div class="calc-detail">
+              <span class="calc-label">최근 3개월 임금 합계</span>
+              <span class="calc-value" id="sumWages">-</span>
+            </div>
+            <div class="calc-detail">
+              <span class="calc-label">1일 평균임금</span>
+              <span class="calc-value" id="avgDailyWage">-</span>
+            </div>
+            <div class="calc-detail">
+              <span class="calc-label">구직급여 기본일액(60%)</span>
+              <span class="calc-value" id="baseDaily">-</span>
+            </div>
+            <div class="limit-info">
+              <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">2025 한도</div>
+              <div style="font-size: 12px; color: #6b7280;">하한 64,192원/일 · 상한 66,000원/일</div>
+              <div class="calc-detail" style="border: none; padding-top: 8px;">
+                <span class="calc-label">한도 적용 후 1일 금액</span>
+                <span class="calc-value" id="adjustedDaily">-</span>
+              </div>
+            </div>
+            <div class="calc-detail">
+              <span class="calc-label">반복수급 감액률</span>
+              <span class="calc-value" id="reductionRate">-</span>
+            </div>
+            <div class="calc-detail">
+              <span class="calc-label">감액 후 1일 금액</span>
+              <span class="calc-value" id="dailyAfterReduction">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 소정급여일수 -->
+        <div class="result-card">
+          <h3>소정급여일수 (지급기간)</h3>
+          <div class="calc-detail">
+            <span class="calc-label">연령 구분</span>
+            <span class="calc-value" id="ageGroup">-</span>
+          </div>
+          <div class="calc-detail">
+            <span class="calc-label">피보험기간</span>
+            <span class="calc-value" id="insuredPeriod">-</span>
+          </div>
+          <div class="calc-detail" style="border: none;">
+            <span class="calc-label">소정급여일수</span>
+            <span class="calc-value" id="benefitDays">-</span>
+          </div>
+          
+          <details style="margin-top: 12px; font-size: 12px; color: #6b7280;">
+            <summary style="cursor: pointer;">표 가이드 보기</summary>
+            <div style="margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div style="border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px;">
+                <div style="font-weight: 600; margin-bottom: 4px;">50세 미만</div>
+                <div>&lt;1년: 120일</div>
+                <div>1~&lt;3년: 150일</div>
+                <div>3~&lt;5년: 180일</div>
+                <div>5~&lt;10년: 210일</div>
+                <div>≥10년: 240일</div>
+              </div>
+              <div style="border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px;">
+                <div style="font-weight: 600; margin-bottom: 4px;">50세 이상/장애인</div>
+                <div>&lt;1년: 120일</div>
+                <div>1~&lt;3년: 180일</div>
+                <div>3~&lt;5년: 210일</div>
+                <div>5~&lt;10년: 240일</div>
+                <div>≥10년: 270일</div>
+              </div>
+            </div>
+          </details>
+        </div>
+
+        <!-- 총 예상 수급액 -->
+        <div class="result-card">
+          <h3>총 예상 수급액</h3>
+          <div class="result-value" id="totalEstimated">-</div>
+          <div class="result-desc">= 감액 후 1일 금액 × 소정급여일수</div>
+          
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #f3f4f6;">
+            <div class="calc-detail">
+              <span class="calc-label">월 환산(참고, 30일 기준)</span>
+              <span class="calc-value" id="monthlyEstimate">-</span>
+            </div>
+            <div class="calc-detail">
+              <span class="calc-label">하한 월 환산 예시</span>
+              <span class="calc-value">1,925,760원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 광고 2 -->
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3505313580947440" data-ad-slot="8596674653" data-ad-format="auto" data-full-width-responsive="true"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <!-- 판정 체크리스트 -->
+    <section class="section reveal" id="eligibility">
+      <h2>3. 판정 체크리스트</h2>
+      
+      <div class="grid grid-cols-3">
+        <div class="result-card">
+          <h3>수급자격 요건</h3>
+          <div class="calc-detail">
+            <span class="calc-label">이직 사유</span>
+            <span class="calc-value" id="reasonStatus">-</span>
+          </div>
+          <div class="calc-detail">
+            <span class="calc-label">최근 18개월 180일 이상</span>
+            <span class="calc-value" id="daysStatus">-</span>
+          </div>
+          <div class="calc-detail">
+            <span class="calc-label">초단시간 근로 기준</span>
+            <span class="calc-value" id="shortTimeStatus">-</span>
+          </div>
+          <div class="calc-detail">
+            <span class="calc-label">구직활동/실업인정</span>
+            <span class="calc-value">센터 지침 준수</span>
+          </div>
+        </div>
+        
+        <div class="result-card">
+          <h3>한도 및 감액</h3>
+          <div class="calc-detail">
+            <span class="calc-label">하한·상한 적용</span>
+            <span class="calc-value">자동 반영</span>
+          </div>
+          <div class="calc-detail">
+            <span class="calc-label">반복수급 감액률</span>
+            <span class="calc-value" id="appliedReductionRate">-</span>
+          </div>
+        </div>
+        
+        <div class="result-card">
+          <h3>기타 확인사항</h3>
+          <div class="calc-detail">
+            <span class="calc-label">주 15시간 미만</span>
+            <span class="calc-value" id="weeklyHoursStatus">-</span>
+          </div>
+          <div class="calc-detail">
+            <span class="calc-label">상세 절차</span>
+            <span class="calc-value">고용24·센터 안내</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="limit-info" style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 12px; color: #6b7280;">예상 수급 가능 여부</div>
+          <div style="font-size: 16px; font-weight: 600;" id="eligibilityStatus">-</div>
+        </div>
+        <div style="font-size: 12px; color: #6b7280;">※ 실제 자격·일수·금액은 고용센터 최종 심사에 따릅니다.</div>
+      </div>
+    </section>
+
+    <!-- 가이드 섹션 -->
+    <section class="section reveal" id="guide">
+      <h2>4. 수식 요약 및 주의사항</h2>
+      
+      <div class="grid grid-cols-2">
+        <div class="result-card">
+          <h3>계산 수식</h3>
+          <div style="font-size: 14px; line-height: 1.6;">
+            <div>1일 평균임금 = (A월+B월+C월) ÷ 총일수</div>
+            <div>구직급여 기본일액 = 1일 평균임금 × 60%</div>
+            <div>한도 적용 후 1일 금액 = MIN(66,000원, MAX(64,192원, 기본일액))</div>
+            <div>감액 후 1일 금액 = 한도 적용 후 1일 금액 × (1 - 감액률)</div>
+            <div>총 예상 수급액 = 감액 후 1일 금액 × 소정급여일수</div>
+          </div>
+        </div>
+        
+        <div class="result-card">
+          <h3>반복수급 감액률</h3>
+          <div style="font-size: 14px; line-height: 1.6;">
+            <div>3회: 10% 감액</div>
+            <div>4회: 25% 감액</div>
+            <div>5회: 40% 감액</div>
+            <div>6회 이상: 50% 감액</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="note" style="margin-top: 16px;">
+        본 계산기는 2025년 기준 하한 64,192원/일(최저임금의 80%×8시간), 상한 66,000원/일을 반영합니다.
+        초단시간(주 15시간 미만)·특수형태 등은 별도 산식/적용여부가 있습니다(주 15시간 미만 3개월 이상 계속근로 시 적용대상). 
+        실제 지급액은 이직 사유 코드, 이직확인서 처리, 실업인정, 구직활동 인정 등 센터 판단에 따라 달라질 수 있습니다.
+      </div>
+    </section>
+
+    <footer>
+      © 2025 실업급여 계산기 · <a href="./2025-median-income-welfare-changes.html">중위소득 변화</a> · <a href="./mohw-basic-livelihood.html">감면 제도</a>
+    </footer>
+  </div>
+
+  <!-- Quick-jump FAB -->
+  <div class="fab" id="quickFab">
+    <button class="fab-btn" aria-label="바로가기">☰</button>
+    <div class="fab-menu" aria-label="바로가기 메뉴">
+      <a href="#input">입력</a>
+      <a href="#result">결과</a>
+      <a href="#eligibility">판정</a>
+      <a href="#guide">가이드</a>
+      <a href="#">맨 위로</a>
+    </div>
+  </div>
+
+  <script>
+    // Constants (2025)
+    const MIN_WAGE_HOURLY_2025 = 10030;
+    const DAILY_FLOOR = Math.round(MIN_WAGE_HOURLY_2025 * 0.8 * 8); // 64,192원
+    const DAILY_CAP = 66000;
+
+    // Pure calculator function
+    function computeBenefits({
+      age = 0,
+      isDisabled = false,
+      insuredYears = 0,
+      insuredMonths = 0,
+      wages = [0, 0, 0],
+      totalCalDays = 0,
+      repeatCount = 0,
+    }) {
+      const r = (x) => Math.round(x);
+      
+      const sumWages = (wages[0] || 0) + (wages[1] || 0) + (wages[2] || 0);
+      const avgDailyWage = totalCalDays > 0 ? sumWages / totalCalDays : 0;
+      const baseDaily = avgDailyWage * 0.6;
+      const adjustedDaily = r(Math.min(DAILY_CAP, Math.max(DAILY_FLOOR, baseDaily || 0)));
+
+      const n = repeatCount || 0;
+      let reductionRate = 0;
+      if (n === 3) reductionRate = 0.1;
+      else if (n === 4) reductionRate = 0.25;
+      else if (n === 5) reductionRate = 0.4;
+      else if (n >= 6) reductionRate = 0.5;
+
+      const dailyAfterReduction = r(adjustedDaily * (1 - reductionRate));
+
+      const yearsFloat = insuredYears + (insuredMonths || 0) / 12;
+      const isAge50PlusOrDisabled = age >= 50 || isDisabled;
+
+      function benefitDaysBy(years) {
+        if (isAge50PlusOrDisabled) {
+          if (years < 1) return 120;
+          if (years < 3) return 180;
+          if (years < 5) return 210;
+          if (years < 10) return 240;
+          return 270;
+        } else {
+          if (years < 1) return 120;
+          if (years < 3) return 150;
+          if (years < 5) return 180;
+          if (years < 10) return 210;
+          return 240;
+        }
+      }
+
+      const benefitDays = benefitDaysBy(yearsFloat);
+      const totalEstimated = dailyAfterReduction * benefitDays;
+
+      return {
+        sumWages,
+        avgDailyWage,
+        baseDaily,
+        adjustedDaily,
+        reductionRate,
+        dailyAfterReduction,
+        benefitDays,
+        totalEstimated: r(totalEstimated),
+      };
+    }
+
+    // Utility functions
+    function fmtKRW(n) {
+      return isFinite(n) ? Math.round(n).toLocaleString("ko-KR") + "원" : "-";
+    }
+
+    function fmtKRWDay(n) {
+      return isFinite(n) ? Math.round(n).toLocaleString("ko-KR") + "원/일" : "-";
+    }
+
+    function parseNum(v) {
+      if (v === "" || v === null || v === undefined) return 0;
+      const n = Number(v);
+      return isNaN(n) ? 0 : n;
+    }
+
+    // DOM elements
+    const elements = {
+      age: document.getElementById('age'),
+      sepDate: document.getElementById('sepDate'),
+      reason: document.getElementById('reason'),
+      insuredDays18m: document.getElementById('insuredDays18m'),
+      isDisabled: document.getElementById('isDisabled'),
+      wageA: document.getElementById('wageA'),
+      wageB: document.getElementById('wageB'),
+      wageC: document.getElementById('wageC'),
+      totalCalDays: document.getElementById('totalCalDays'),
+      weeklyHours: document.getElementById('weeklyHours'),
+      shortTimeMonths: document.getElementById('shortTimeMonths'),
+      repeatCount: document.getElementById('repeatCount'),
+      insuredYears: document.getElementById('insuredYears'),
+      insuredMonths: document.getElementById('insuredMonths'),
+      shortTimeGroup: document.getElementById('shortTimeGroup'),
+      validationErrors: document.getElementById('validationErrors')
+    };
+
+    // Update calculation
+    function updateCalculation() {
+      const age = parseNum(elements.age.value);
+      const isDisabled = elements.isDisabled.checked;
+      const insuredYears = parseNum(elements.insuredYears.value);
+      const insuredMonths = parseNum(elements.insuredMonths.value);
+      const wageA = parseNum(elements.wageA.value);
+      const wageB = parseNum(elements.wageB.value);
+      const wageC = parseNum(elements.wageC.value);
+      const totalCalDays = parseNum(elements.totalCalDays.value);
+      const repeatCount = parseNum(elements.repeatCount.value);
+      const weeklyHours = parseNum(elements.weeklyHours.value);
+      const shortTimeMonths = parseNum(elements.shortTimeMonths.value);
+      const reason = elements.reason.value;
+      const insuredDays18m = parseNum(elements.insuredDays18m.value);
+
+      // Show/hide short time work input
+      if (weeklyHours > 0 && weeklyHours < 15) {
+        elements.shortTimeGroup.style.display = 'block';
+      } else {
+        elements.shortTimeGroup.style.display = 'none';
+      }
+
+      // Validation
+      const validation = [];
+      if (totalCalDays <= 0) validation.push("퇴직 전 3개월 총일수(달력일수 합)를 1 이상으로 입력하세요.");
+      if (wageA + wageB + wageC <= 0) validation.push("최근 3개월 급여 총액을 입력하세요.");
+      if (insuredYears < 0 || insuredMonths < 0) validation.push("피보험기간(년/개월)을 올바르게 입력하세요.");
+
+      if (validation.length > 0) {
+        elements.validationErrors.style.display = 'block';
+        elements.validationErrors.className = 'validation-error';
+        elements.validationErrors.innerHTML = `
+          <div style="font-weight: 600; margin-bottom: 4px;">입력 오류</div>
+          <ul style="list-style: disc; padding-left: 20px;">
+            ${validation.map(v => `<li>${v}</li>`).join('')}
+          </ul>
+        `;
+      } else {
+        elements.validationErrors.style.display = 'none';
+      }
+
+      // Calculate benefits
+      const result = computeBenefits({
+        age,
+        isDisabled,
+        insuredYears,
+        insuredMonths,
+        wages: [wageA, wageB, wageC],
+        totalCalDays,
+        repeatCount,
+      });
+
+      // Update result display
+      document.getElementById('sumWages').textContent = fmtKRW(result.sumWages);
+      document.getElementById('avgDailyWage').textContent = fmtKRWDay(result.avgDailyWage);
+      document.getElementById('baseDaily').textContent = fmtKRWDay(result.baseDaily);
+      document.getElementById('adjustedDaily').textContent = fmtKRWDay(result.adjustedDaily);
+      document.getElementById('reductionRate').textContent = `${(result.reductionRate * 100).toFixed(0)}%`;
+      document.getElementById('dailyAfterReduction').textContent = fmtKRWDay(result.dailyAfterReduction);
+      document.getElementById('benefitDays').textContent = `${result.benefitDays}일`;
+      document.getElementById('totalEstimated').textContent = fmtKRW(result.totalEstimated);
+      document.getElementById('monthlyEstimate').textContent = fmtKRW(result.dailyAfterReduction * 30);
+
+      // Age group and period
+      const isAge50PlusOrDisabled = age >= 50 || isDisabled;
+      document.getElementById('ageGroup').textContent = isAge50PlusOrDisabled ? "50세 이상 또는 장애인" : "50세 미만";
+      document.getElementById('insuredPeriod').textContent = `${insuredYears}년 ${insuredMonths}개월`;
+
+      // Eligibility status
+      const reasonEligible = reason === "비자발적" || reason === "정당한 자발적";
+      const insuredDaysEligible = insuredDays18m >= 180;
+      const shortTimeExcluded = weeklyHours > 0 && weeklyHours < 15 && shortTimeMonths < 3;
+
+      document.getElementById('reasonStatus').textContent = reasonEligible ? "충족" : "미충족/확인";
+      document.getElementById('reasonStatus').className = reasonEligible ? "status-eligible" : "status-not-eligible";
+
+      document.getElementById('daysStatus').textContent = insuredDaysEligible ? "충족" : "미충족";
+      document.getElementById('daysStatus').className = insuredDaysEligible ? "status-eligible" : "status-not-eligible";
+
+      if (weeklyHours < 15) {
+        document.getElementById('shortTimeStatus').textContent = !shortTimeExcluded ? "해당 없음/예외(3개월 이상)" : "적용 제외";
+        document.getElementById('shortTimeStatus').className = !shortTimeExcluded ? "status-eligible" : "status-not-eligible";
+      } else {
+        document.getElementById('shortTimeStatus').textContent = "해당 없음";
+        document.getElementById('shortTimeStatus').className = "";
+      }
+
+      document.getElementById('appliedReductionRate').textContent = `${(result.reductionRate * 100).toFixed(0)}%`;
+
+      document.getElementById('weeklyHoursStatus').textContent = weeklyHours < 15 ? "별도 기준 확인" : "해당 없음";
+      document.getElementById('weeklyHoursStatus').className = weeklyHours < 15 ? "status-warning" : "";
+
+      // Overall eligibility
+      const eligibilityStatus = !reasonEligible
+        ? "요건 미충족(이직 사유)"
+        : !insuredDaysEligible
+          ? "요건 미충족(최근 18개월 180일 미만)"
+          : shortTimeExcluded
+            ? "요건 미충족(주 15시간 미만·3개월 미만)"
+            : "예상 수급 가능(핵심 요건 충족)";
+
+      document.getElementById('eligibilityStatus').textContent = eligibilityStatus;
+      const statusElement = document.getElementById('eligibilityStatus');
+      if (eligibilityStatus.includes("수급 가능")) {
+        statusElement.className = "status-eligible";
+      } else {
+        statusElement.className = "status-not-eligible";
+      }
+    }
+
+    // Sample data functions
+    function fillSampleA() {
+      elements.wageA.value = 2500000;
+      elements.wageB.value = 2500000;
+      elements.wageC.value = 2500000;
+      elements.totalCalDays.value = 92;
+      elements.age.value = 35;
+      elements.insuredYears.value = 2;
+      elements.insuredMonths.value = 0;
+      elements.weeklyHours.value = 40;
+      elements.insuredDays18m.value = 300;
+      elements.repeatCount.value = 0;
+      elements.reason.value = "비자발적";
+      elements.isDisabled.checked = false;
+      elements.shortTimeMonths.value = 0;
+      updateCalculation();
+    }
+
+    function fillSampleB() {
+      elements.wageA.value = 5000000;
+      elements.wageB.value = 5000000;
+      elements.wageC.value = 5000000;
+      elements.totalCalDays.value = 92;
+      elements.age.value = 55;
+      elements.insuredYears.value = 12;
+      elements.insuredMonths.value = 0;
+      elements.weeklyHours.value = 40;
+      elements.insuredDays18m.value = 400;
+      elements.repeatCount.value = 3;
+      elements.reason.value = "비자발적";
+      elements.isDisabled.checked = false;
+      elements.shortTimeMonths.value = 0;
+      updateCalculation();
+    }
+
+    function resetAll() {
+      Object.values(elements).forEach(el => {
+        if (el && el.type === 'checkbox') {
+          el.checked = false;
+        } else if (el && el.value !== undefined) {
+          el.value = el.type === 'select-one' ? '비자발적' : (el.type === 'number' ? 0 : '');
+        }
+      });
+      elements.weeklyHours.value = 40;
+      updateCalculation();
+    }
+
+    // Event listeners
+    Object.values(elements).forEach(el => {
+      if (el && el.addEventListener) {
+        el.addEventListener('input', updateCalculation);
+        el.addEventListener('change', updateCalculation);
+      }
+    });
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set canonical to current URL if empty
+      const canonical = document.getElementById('canonical-link');
+      if (canonical && (!canonical.getAttribute('href') || canonical.getAttribute('href') === '')) {
+        canonical.setAttribute('href', window.location.origin + window.location.pathname);
+      }
+
+      // Hide unfilled AdSense slots
+      document.querySelectorAll('ins.adsbygoogle').forEach(adSlot => {
+        const observer = new MutationObserver(() => {
+          if (adSlot.getAttribute('data-ad-status') === 'unfilled') {
+            const adContainer = adSlot.closest('.ad-container');
+            if (adContainer) adContainer.style.display = 'none';
+          }
+        });
+        observer.observe(adSlot, { attributes: true, attributeFilter: ['data-ad-status'] });
+      });
+
+      // Scroll progress bar
+      const progressBar = document.getElementById('scrollProgress');
+      const updateProgress = () => {
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (progressBar) progressBar.style.width = progress + '%';
+      };
+      updateProgress();
+      window.addEventListener('scroll', updateProgress, { passive: true });
+
+      // Section reveal
+      const sections = document.querySelectorAll('.section.reveal');
+      const revObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+      }, { threshold: 0.1 });
+      sections.forEach(s => revObs.observe(s));
+
+      // Active nav highlight for anchors
+      const nav = document.getElementById('topNavLinks');
+      const anchorLinks = Array.from(nav.querySelectorAll('a')).filter(a => a.getAttribute('href') && a.getAttribute('href').startsWith('#'));
+      const idToLink = new Map(anchorLinks.map(a => [a.getAttribute('href').replace('#',''), a]));
+      const secObs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const id = entry.target.id;
+          const link = idToLink.get(id);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            anchorLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+          }
+        });
+      }, { rootMargin: '-40% 0px -50% 0px', threshold: 0.01 });
+      document.querySelectorAll('section[id]').forEach(sec => secObs.observe(sec));
+
+      // FAB toggle
+      const fab = document.getElementById('quickFab');
+      const fabBtn = fab ? fab.querySelector('.fab-btn') : null;
+      fabBtn && fabBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        fab.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (fab && !fab.contains(e.target)) fab.classList.remove('open');
+      });
+
+      // Initial calculation
+      updateCalculation();
+    });
+  </script>
+</body>
+</html>
