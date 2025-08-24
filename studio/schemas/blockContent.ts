@@ -58,5 +58,9 @@ export default defineType({
     defineArrayMember({
       type: 'table',
     }),
+    defineArrayMember({
+      type: 'linkPreview',
+      title: 'Link Preview',
+    }),
   ],
 }) 

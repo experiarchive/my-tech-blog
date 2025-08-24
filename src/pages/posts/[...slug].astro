@@ -1,15 +1,11 @@
 ---
-// src/pages/posts/[...slug].astro
-
 import { toHTML } from '@portabletext/to-html';
-import { client, formatDate, getImageUrl } from '../../../sanity/client'; // 새로운 이미지 함수 추가
+import { client, getImageUrl } from '../../../sanity/client';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { Image } from 'astro:assets';
-import { Fragment } from 'astro/jsx-runtime';
 import Adsense from '../../components/Adsense.astro';
+import { fetchLinkMetadata } from '../../utils/linkPreview';
 
-// --- Astro의 동적 페이지 생성 기능 ---
-// 1. 어떤 페이지들을 만들어야 하는지 목록을 생성합니다.
 export async function getStaticPaths() {
   const query = `*[_type == "post" && defined(slug.current)][] { "slug": slug.current }`;
   const posts = await client.fetch(query);
@@ -18,11 +14,8 @@ export async function getStaticPaths() {
   }));
 }
 
-// 2. 현재 페이지의 slug 값을 가져옵니다.
 const { slug } = Astro.params;
 
-// --- 데이터 가져오기 ---
-// 3. 해당 slug를 가진 포스트의 모든 데이터를 가져옵니다.
 const query = `*[_type == "post" && slug.current == $slug][0] {
   title,
   publishedAt,
@@ -41,209 +34,180 @@ const query = `*[_type == "post" && slug.current == $slug][0] {
 
 const post = await client.fetch(query, { slug });
 
-// 데이터가 없으면 404 페이지를 보여줍니다.
 if (!post) {
   return Astro.redirect('/404');
 }
 
-// excerpt가 없거나 공백일 경우 고유한 description 생성
-const getUniqueDescription = (title: string, excerpt: string) => {
-  // excerpt가 있고 공백이 아닌 경우
-  if (excerpt && excerpt.trim().length > 0) {
-    return excerpt.trim();
-  }
-  
-  // excerpt가 없거나 공백인 경우 제목 기반으로 description 생성
-  return `${title}에 대한 자세한 내용을 확인해보세요. 유용한 정보와 실용적인 팁을 제공합니다.`;
-};
+const description = post.excerpt?.trim() || `${post.title}에 대한 자세한 내용을 확인해보세요.`;
 
-const description = getUniqueDescription(post.title, post.excerpt);
-
-// 디버깅을 위한 로그
-console.log('Post title:', post.title);
-console.log('Original excerpt:', post.excerpt);
-console.log('Final description:', description);
-
-// 1. Slugify 함수 및 headings 배열, 카운터 추가
-const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-
-const headings: {level: number, text: string, slug: string, number: string}[] = [];
-let h2Counter = 0;
-let h3Counter = 0;
-
-const generatedSlugs = new Set<string>();
-
-const createUniqueSlug = (text: string) => {
-  let slug = slugify(text);
-  let uniqueSlug = slug;
-  let counter = 2;
-  while (generatedSlugs.has(uniqueSlug)) {
-    uniqueSlug = `${slug}-${counter}`;
-    counter++;
-  }
-  generatedSlugs.add(uniqueSlug);
-  return uniqueSlug;
-};
-
-const toPlainText = (blocks: any[] = []) => {
-    return blocks
-        .map(block => {
-            if (block._type === 'span' && block.text) {
-                return block.text;
-            }
-            return '';
-        })
-        .join('');
-};
-
-// --- 먼저 모든 헤딩을 순서대로 수집 ---
-const bodyBlocks: PTBlock[] = Array.isArray(post.body) ? post.body : [];
-
-// 모든 블록을 순회하면서 헤딩 정보를 순서대로 수집
-for (const block of bodyBlocks) {
-  if (block._type === 'block') {
-    if (block.style === 'h2') {
-      const text = toPlainText(block.children);
-      const slug = createUniqueSlug(text);
-      h2Counter++;
-      h3Counter = 0; // H2가 나오면 H3 카운터 리셋
-      const number = `${h2Counter}.`;
-      headings.push({ level: 2, text, slug, number });
-    } else if (block.style === 'h3') {
-      const text = toPlainText(block.children);
-      const slug = createUniqueSlug(text);
-      h3Counter++;
-      const number = '–';
-      headings.push({ level: 3, text, slug, number });
-    }
-  }
-}
-
-// --- H2 기준 섹션 분리 (헤딩 정보는 이미 수집됨) ---
-type PTBlock = any;
-type Section = { title: string | null; id: string; blocks: PTBlock[] };
-
-const sections: Section[] = [];
-let currentSection: Section = { title: null, id: 'prologue', blocks: [] };
-
-// 헤딩 정보를 찾기 위한 인덱스
-const getHeadingInfo = (text: string, level: number) => {
-  return headings.find(h => h.text === text && h.level === level);
-};
-
-for (const block of bodyBlocks) {
-  if (block._type === 'block' && block.style === 'h2') {
-    sections.push(currentSection);
-    const text = toPlainText(block.children);
-    const headingInfo = getHeadingInfo(text, 2);
-    currentSection = { title: text, id: headingInfo?.slug || 'unknown', blocks: [] };
-    continue;
-  }
-  currentSection.blocks.push(block);
-}
-sections.push(currentSection);
-
-const renderBlocks = (blocks: PTBlock[]) => {
-  const components = {
-    block: {
-      normal: ({ children }: any) => `<p class="mb-6 text-slate-700 dark:text-slate-300 text-[17px] sm:text-lg">${children}</p>`,
-      h3: ({ children, value }: any) => {
-        const text = toPlainText(value.children);
-        const headingInfo = getHeadingInfo(text, 3);
-        const slug = headingInfo?.slug || createUniqueSlug(text);
-        return `<h3 id="${slug}" class="scroll-mt-24 mt-10 mb-4 text-xl sm:text-2xl font-bold text-slate-800 dark:text-slate-100">${children}</h3>`;
-      },
-      h1: ({ children }: any) => `<h1 class="text-3xl font-bold text-slate-900 dark:text-white mt-8 mb-4">${children}</h1>`,
-      h4: ({ children }: any) => `<h4 class="text-lg font-medium text-slate-800 dark:text-gray-300 mt-4 mb-2">${children}</h4>`,
-    },
-    list: {
-      bullet: ({ children }: any) => `<ul class="list-disc list-outside pl-5 mb-6 space-y-2 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ul>`,
-      number: ({ children }: any) => `<ol class="list-decimal list-outside pl-5 mb-6 space-y-2 text-[17px] sm:text-lg text-slate-700 dark:text-slate-300">${children}</ol>`,
-    },
-    listItem: {
-      bullet: ({ children }: any) => `<li>${children}</li>`,
-      number: ({ children }: any) => `<li>${children}</li>`,
-    },
-    marks: {
-      strong: ({ children }: any) => `<strong class="font-semibold text-slate-800 dark:text-slate-200">${children}</strong>`,
-      em: ({ children }: any) => `<em class="italic">${children}</em>`,
-      link: ({ children, value }: any) => `<a href="${value.href}" target="_blank" rel="noopener noreferrer">${children}</a>`,
-    },
-    types: {
-      image: ({ value }: any) => {
-        if (!value || !value.asset) return '';
-        const imageUrl = getImageUrl(value.asset, { width: 800 });
-        const alt = value.alt || 'Image';
-        const caption = value.caption;
+// GeneratePress 스타일 렌더링 컴포넌트
+const renderComponents = {
+  block: {
+    normal: ({ children }: any) => `<p>${children}</p>`,
+    h1: ({ children }: any) => `<h1>${children}</h1>`,
+    h2: ({ children }: any) => `<h2>${children}</h2>`,
+    h3: ({ children }: any) => `<h3>${children}</h3>`,
+    h4: ({ children }: any) => `<h4>${children}</h4>`,
+    blockquote: ({ children }: any) => `<blockquote>${children}</blockquote>`,
+  },
+  list: {
+    bullet: ({ children }: any) => `<ul>${children}</ul>`,
+    number: ({ children }: any) => `<ol>${children}</ol>`,
+  },
+  listItem: {
+    bullet: ({ children }: any) => `<li>${children}</li>`,
+    number: ({ children }: any) => `<li>${children}</li>`,
+  },
+  marks: {
+    strong: ({ children }: any) => `<strong>${children}</strong>`,
+    em: ({ children }: any) => `<em>${children}</em>`,
+    link: ({ children, value }: any) => {
+      const href = value.href;
+      
+      // 특정 도메인들을 자동 링크 프리뷰로 처리
+      const previewDomains = ['coupang.com', 'amazon.com', 'gmarket.co.kr', '11st.co.kr', 'interpark.com'];
+      const shouldShowPreview = previewDomains.some(domain => href.includes(domain));
+      
+      if (shouldShowPreview) {
+        // 기본 링크 프리뷰 카드 생성 (메타데이터 없이)
+        const hostname = new URL(href).hostname.replace('www.', '').replace('link.', '');
+        const siteName = hostname.includes('coupang') ? 'COUPANG' : 
+                        hostname.includes('amazon') ? 'AMAZON' :
+                        hostname.includes('gmarket') ? 'GMARKET' :
+                        hostname.includes('11st') ? '11번가' :
+                        hostname.toUpperCase();
+        
         return `
-          <figure class="my-8">
-            <img src="${imageUrl}" alt="${alt}" class="w-full h-auto rounded-lg shadow-md" loading="lazy" />
-            ${caption ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${caption}</figcaption>` : 
-              (value.alt ? `<figcaption class="text-center text-sm text-slate-600 dark:text-slate-400 mt-2 italic">${value.alt}</figcaption>` : '')}
-          </figure>
-        `;
-      },
-      table: ({ value }: any) => {
-        const { rows } = value;
-        if (!rows || rows.length === 0) return '';
-        const headerRow = rows[0];
-        const bodyRows = rows.slice(1);
-        return `
-          <div class="overflow-x-auto my-6 border border-slate-200 dark:border-slate-700 rounded-lg">
-            <table class="min-w-full border-collapse">
-              <thead class="bg-slate-50 dark:bg-slate-700/50">
-                <tr>
-                  ${headerRow.cells.map((cell: any) => 
-                    `<th class="whitespace-nowrap border-b border-slate-200 dark:border-slate-700 px-4 py-3 text-left font-semibold text-slate-800 dark:text-slate-200">${cell || ''}</th>`
-                  ).join('')}
-                </tr>
-              </thead>
-              <tbody>
-                ${bodyRows.map((row: any) => `
-                  <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50">
-                    ${row.cells.map((cell: any) => 
-                      `<td class="whitespace-nowrap border-t border-slate-200 dark:border-slate-700 px-4 py-3 text-slate-600 dark:text-slate-300">${cell || ''}</td>`
-                    ).join('')}
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
+          <div class="gp-link-preview auto-link-preview">
+            <a href="${href}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+              <div style="display: flex; gap: 16px; align-items: flex-start;">
+                <div class="gp-link-preview-content" style="flex: 1; min-width: 0;">
+                  <h3 class="gp-link-preview-title" style="margin: 0 0 8px 0;">${children}</h3>
+                  <div class="gp-link-preview-site" style="margin-bottom: 8px;">${siteName}</div>
+                  <div class="gp-link-preview-url">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    ${hostname}
+                  </div>
+                </div>
+              </div>
+            </a>
           </div>
         `;
       }
+      
+      // 일반 링크는 기존 방식대로 처리
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${children}</a>`;
+    },
+  },
+  types: {
+    image: ({ value }: any) => {
+      if (!value?.asset) return '';
+      const imageUrl = getImageUrl(value.asset, { width: 800 });
+      const alt = value.alt || 'Image';
+      const caption = value.caption;
+      return `
+        <figure style="margin: 32px 0;">
+          <img src="${imageUrl}" alt="${alt}" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" loading="lazy" />
+          ${caption ? `<figcaption style="text-align: center; font-size: 14px; color: var(--gp-text-light); margin-top: 12px; font-style: italic;">${caption}</figcaption>` : 
+            (value.alt ? `<figcaption style="text-align: center; font-size: 14px; color: var(--gp-text-light); margin-top: 12px; font-style: italic;">${value.alt}</figcaption>` : '')}
+        </figure>
+      `;
+    },
+    linkPreview: ({ value }: any) => {
+      if (!value?.url) return '';
+      const { url, title, description, imageUrl, siteName } = value;
+      // imageUrl 필드를 먼저 확인하고, 없으면 기존 image.asset 방식을 사용
+      const finalImageUrl = imageUrl || (value.image?.asset ? getImageUrl(value.image.asset, { width: 400, height: 200 }) : '');
+      
+      return `
+        <div class="gp-link-preview">
+          <a href="${url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
+            <div style="display: flex; gap: 16px; align-items: flex-start;">
+              ${finalImageUrl ? `
+                <div class="gp-link-preview-image-container" style="flex-shrink: 0; width: 200px; height: 120px; overflow: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                  <img src="${finalImageUrl}" alt="${title || 'Preview'}" class="gp-link-preview-image" loading="lazy" 
+                       style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                </div>
+              ` : ''}
+              <div class="gp-link-preview-content" style="flex: 1; min-width: 0;">
+                ${title ? `<h3 class="gp-link-preview-title line-clamp-2" style="margin: 0 0 8px 0;">${title}</h3>` : ''}
+                ${siteName ? `<div class="gp-link-preview-site" style="margin-bottom: 8px;">${siteName}</div>` : ''}
+                ${description ? `<p class="gp-link-preview-description line-clamp-3" style="margin-bottom: 12px;">${description}</p>` : ''}
+                <div class="gp-link-preview-url">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  ${new URL(url).hostname}
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `;
+    },
+    table: ({ value }: any) => {
+      const { rows } = value;
+      if (!rows || rows.length === 0) return '';
+      const headerRow = rows[0];
+      const bodyRows = rows.slice(1);
+      return `
+        <div style="overflow-x: auto; margin: 24px 0; border: 1px solid var(--gp-border); border-radius: 8px;">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead style="background: var(--gp-background-secondary);">
+              <tr>
+                ${headerRow.cells.map((cell: any) => 
+                  `<th style="border-bottom: 1px solid var(--gp-border); padding: 12px; text-align: left; font-weight: 600; color: var(--gp-text);">${cell || ''}</th>`
+                ).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${bodyRows.map((row: any) => `
+                <tr style="border-bottom: 1px solid var(--gp-border);">
+                  ${row.cells.map((cell: any) => 
+                    `<td style="padding: 12px; color: var(--gp-text-light);">${cell || ''}</td>`
+                  ).join('')}
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
     }
-  };
-  return toHTML(blocks || [], { components });
+  }
 };
 
-const adPosition = 2;
-let h2Count = 0;
-const sectionsWithAd = sections.map((section) => {
-  const html = renderBlocks(section.blocks);
-  if (section.title && html.trim().length > 0) h2Count++;
-  return { ...section, html, showAdAfter: h2Count === adPosition };
-});
-
+const htmlContent = toHTML(post.body || [], { components: renderComponents });
 ---
-<BaseLayout title={post.title} description={description}>
-  <div class="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 py-12">
-    <article class="bg-transparent">
-      <div class="py-4 sm:p-6 md:p-8">
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 leading-tight">{post.title}</h1>
-        <div class="flex items-center text-base text-gray-500 dark:text-gray-400 mb-8">
-          <span>Published on {new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-          {post.category && (
-            <Fragment>
-              <span class="mx-2">·</span>
-              <span>{post.category}</span>
-            </Fragment>
-          )}
-        </div>
 
-        {post.mainImage && post.mainImage.asset && (
-          <div class="my-8">
+<BaseLayout title={post.title} description={description}>
+  <div class="gp-container">
+    <div class="gp-content-area">
+      <article>
+        <!-- 포스트 헤더 -->
+        <header class="gp-entry-header">
+          <h1 class="gp-entry-title">{post.title}</h1>
+          <div class="gp-entry-meta">
+            <span>Published on {new Date(post.publishedAt).toLocaleDateString('ko-KR', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}</span>
+            {post.category && (
+              <>
+                <span> • </span>
+                <span>{post.category}</span>
+              </>
+            )}
+          </div>
+        </header>
+
+        <!-- 메인 이미지 -->
+        {post.mainImage?.asset && (
+          <div style="margin: 40px 0;">
             <Image
-              class="w-full max-h-[500px] object-cover rounded-lg shadow-md"
+              style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
               src={post.mainImage.asset.url}
               width={post.mainImage.asset.dimensions.width}
               height={post.mainImage.asset.dimensions.height}
@@ -254,139 +218,38 @@ const sectionsWithAd = sections.map((section) => {
             />
           </div>
         )}
-        
-        <!-- 3. 목차(TOC) 컴포넌트 수정 (넘버링 표시) -->
-        {headings.length > 0 && (
-          <div class="mb-12 p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700/50">
-            <h2 class="text-xl font-bold mb-4 dark:text-white flex items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-slate-500"><path d="M4 6h16M4 12h16M4 18h7"/></svg>On this page</h2>
-            <ul class="space-y-2">
-              {headings.map((heading) => (
-                <li class:list={[
-                  'font-medium',
-                  { 'ml-4': heading.level === 3 } // H3 들여쓰기 조정
-                ]}>
-                  <a 
-                    href={`#${heading.slug}`} 
-                    class="toc-link flex items-start text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors group"
-                  >
-                    <span 
-                      class:list={[
-                        "mr-2.5 text-gray-400 dark:text-gray-500 w-5 text-right shrink-0 group-hover:text-slate-500 dark:group-hover:text-slate-400 transition-colors",
-                        heading.level === 2 ? 'font-mono' : 'text-center' // H2는 숫자 폰트, H3는 기호 중앙 정렬
-                      ]}
-                    >
-                      {heading.number}
-                    </span>
-                    <span class="flex-1">{heading.text}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
 
-        <!-- 본문 상단 광고 (prod only) -->
+        <!-- 상단 광고 (prod only) -->
         {import.meta.env.PROD && (
-          <div class="my-8 flex justify-center ad-wrapper">
+          <div style="margin: 32px 0; text-align: center;">
             <Adsense slot="2197969029" />
           </div>
         )}
 
-        <div class="space-y-8">
-          {sectionsWithAd.map((section, index) => {
-            if (!section.html || section.html.trim().length === 0) return null;
-            return (
-              <Fragment>
-                <div class="p-px rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 hover:shadow-xl hover:shadow-slate-400/30 dark:hover:shadow-black/30 transition-all duration-300">
-                  <section 
-                    id={section.id} 
-                    class="scroll-mt-24 p-6 sm:p-8 rounded-[14px] bg-slate-50/90 dark:bg-slate-800/90 backdrop-blur-lg"
-                  >
-                    {section.title && (
-                      <h2 
-                        class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mb-8 tracking-tight flex items-start gap-3"
-                      >{section.title}</h2>
-                    )}
-                    <div 
-                      class="prose prose-lg max-w-none dark:prose-invert" 
-                      set:html={section.html} 
-                    />
-                  </section>
-                </div>
-                
-                {/* 두 번째 H2 섹션 후에 본문 중간 광고 삽입 (prod only) */}
-                {import.meta.env.PROD && section.showAdAfter && (
-                  <div class="my-8 flex justify-center ad-wrapper">
-                    <Adsense slot="5616138153" />
-                  </div>
-                )}
-              </Fragment>
-            )
-          })}
-        </div>
+        <!-- 포스트 콘텐츠 -->
+        <div class="gp-entry-content" set:html={htmlContent} />
 
-        <!-- 본문 하단 광고 (prod only) -->
+        <!-- 하단 광고 (prod only) -->
         {import.meta.env.PROD && (
-          <div class="my-8 flex justify-center ad-wrapper">
+          <div style="margin: 32px 0; text-align: center;">
             <Adsense slot="8899108740" />
           </div>
         )}
-      </div>
-    </article>
+      </article>
+    </div>
   </div>
 </BaseLayout>
+
+<!-- GeneratePress 스타일 적용을 위한 추가 CSS -->
 <style>
-  .prose > :first-child {
-    margin-top: 0;
-  }
-  .prose h3:first-child {
-    margin-top: 0;
-  }
-  .prose h2, .prose h3, .prose h4 {
-    /* set:html로 주입되는 콘텐츠 내부의 제목 스타일은 여기에 정의합니다. */
-  }
-</style>
-
-<style is:global>
-  body {
-    background-color: #f8fafc; /* light mode fallback */
-    background-image: linear-gradient(180deg, #f0f4ff 0%, #f8fafc 100%);
-  }
-  .dark body {
-    background-color: #0b1120; /* dark mode fallback */
-    background-image: linear-gradient(180deg, #0d1222 0%, #020617 100%);
+  @media (max-width: 640px) {
+    .gp-link-preview {
+      margin-left: -20px;
+      margin-right: -20px;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
   }
 </style>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // 모든 목차 링크를 선택합니다.
-    const tocLinks = document.querySelectorAll('.toc-link');
-
-    // 링크가 없으면 아무 작업도 하지 않습니다.
-    if (!tocLinks.length) return;
-
-    // 각 링크에 클릭 이벤트 리스너를 추가합니다.
-    tocLinks.forEach(link => {
-      link.addEventListener('click', (event) => {
-        // 링크의 기본 동작(페이지 이동 및 기록 추가)을 막습니다.
-        event.preventDefault();
-
-        // href 속성에서 #을 제외한 ID 값을 가져옵니다.
-        const targetId = link.getAttribute('href')?.substring(1);
-        if (!targetId) return;
-
-        // 해당 ID를 가진 요소를 찾습니다.
-        const targetElement = document.getElementById(targetId);
-
-        // 요소가 존재하면, 해당 위치로 부드럽게 스크롤합니다.
-        if (targetElement) {
-          targetElement.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-  });
-</script> 

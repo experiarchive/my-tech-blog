@@ -1,45 +1,41 @@
 ---
-// Header.astro
+// Header.astro - GeneratePress 스타일
 ---
-<header class="bg-white border-b border-gray-200 sticky top-0 z-50 dark:bg-gray-800 dark:border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
+
+<header class="gp-header">
+    <div class="gp-container">
+        <div class="flex items-center justify-between py-4">
             <!-- 로고 -->
-            <a href="/" class="flex items-center gap-3 text-gray-800 dark:text-gray-200">
-                <span class="material-icons text-primary-500" style="font-size: 32px; color: #3d98f4;">auto_stories</span>
-                <span class="text-gray-800 text-xl sm:text-2xl font-bold tracking-tight dark:text-gray-200">Lintrahub</span>
+            <a href="/" class="gp-site-logo">
+                Lintrahub
             </a>
 
             <!-- 데스크톱 네비게이션 -->
-            <nav class="hidden md:flex items-center gap-6">
-                <div class="flex items-center gap-6">
-                    <a class="text-gray-700 hover:text-primary-500 text-base font-medium transition-colors duration-200 dark:text-gray-300 dark:hover:text-white" href="/" style="--hover-color: #3d98f4;">Home</a>
-                    <a class="text-gray-700 hover:text-primary-500 text-base font-medium transition-colors duration-200 dark:text-gray-300 dark:hover:text-white" href="/posts" style="--hover-color: #3d98f4;">Posts</a>
-                </div>
+            <nav class="hidden md:flex items-center gp-navigation">
+                <a href="/">Home</a>
+                <a href="/posts">Posts</a>
             </nav>
 
-            <div class="flex items-center">
+            <div class="flex items-center gap-2">
                 <!-- 다크 모드 토글 버튼 -->
-                <button id="dark-mode-toggle" class="ml-4 text-gray-700 hover:text-primary-500 focus:outline-none transition-colors duration-200 dark:text-gray-300 dark:hover:text-white">
-                    <span class="material-icons light-icon">light_mode</span>
-                    <span class="material-icons dark-icon hidden">dark_mode</span>
+                <button id="dark-mode-toggle" class="gp-dark-toggle">
+                    <span class="light-icon">☀️</span>
+                    <span class="dark-icon hidden">🌙</span>
                 </button>
-    
+
                 <!-- 모바일 메뉴 버튼 -->
-                <div class="md:hidden ml-4">
-                    <button id="mobile-menu-button" class="text-gray-700 hover:text-primary-500 focus:outline-none focus:text-primary-500 transition-colors duration-200 dark:text-gray-300 dark:hover:text-white">
-                        <span class="material-icons">menu</span>
-                    </button>
-                </div>
+                <button id="mobile-menu-button" class="md:hidden gp-dark-toggle">
+                    <span>☰</span>
+                </button>
             </div>
         </div>
 
         <!-- 모바일 네비게이션 메뉴 -->
-        <div id="mobile-menu" class="md:hidden hidden">
-            <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                <a href="/" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary-500 hover:bg-gray-50 rounded-md transition-colors duration-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Home</a>
-                <a href="/posts" class="block px-3 py-2 text-base font-medium text-gray-700 hover:text-primary-500 hover:bg-gray-50 rounded-md transition-colors duration-200 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">Posts</a>
-            </div>
+        <div id="mobile-menu" class="md:hidden hidden border-t border-gray-200 dark:border-gray-700">
+            <nav class="py-4 gp-navigation">
+                <a href="/" class="block py-2">Home</a>
+                <a href="/posts" class="block py-2">Posts</a>
+            </nav>
         </div>
     </div>
 </header>
@@ -63,7 +59,7 @@
             const lightIcon = darkModeToggle.querySelector('.light-icon');
             const darkIcon = darkModeToggle.querySelector('.dark-icon');
     
-                const applyTheme = (theme) => {
+            const applyTheme = (theme) => {
                 if (!lightIcon || !darkIcon) return;
                 if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
@@ -74,7 +70,7 @@
                     lightIcon.classList.remove('hidden');
                     darkIcon.classList.add('hidden');
                 }
-                };
+            };
     
             darkModeToggle.addEventListener('click', function() {
                 const isDarkMode = document.documentElement.classList.contains('dark');
@@ -89,4 +85,4 @@
             applyTheme(savedTheme);
         }
     });
-</script> 
+</script>

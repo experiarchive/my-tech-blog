@@ -1,5 +1,4 @@
 ---
-// 컴포넌트를 불러옵니다.
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
@@ -11,20 +10,17 @@ export interface Props {
 
 const { title, description } = Astro.props;
 
-// description이 없거나 공백일 때만 기본값 사용
 const finalDescription = description && description.trim().length > 0 
   ? description.trim()
   : '기술과 건강에 관한 유용한 정보를 공유하는 블로그입니다.';
-
-const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 ---
+
 <!doctype html>
 <html lang="ko">
 	<head>
-		<!-- head 내용은 동일 -->
 		<meta charset="UTF-8" />
 		<meta name="description" content={finalDescription} />
-		<meta name="viewport" content="width=device-width" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
@@ -52,16 +48,15 @@ const adClient = import.meta.env.PUBLIC_ADSENSE_CLIENT;
 		</script>
 
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 	</head>
-	<body class="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-		<div class="relative flex size-full min-h-screen flex-col">
-			<Header /> <!-- Header 컴포넌트 추가 -->
-			<main class="flex-grow">
-				<slot /> <!-- 다른 페이지의 내용이 이 부분에 들어옵니다. -->
+	<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+		<div class="min-h-screen flex flex-col">
+			<Header />
+			<main class="flex-grow gp-main">
+				<slot />
 			</main>
-			<Footer /> <!-- Footer 컴포넌트 추가 -->
+			<Footer />
 		</div>
 	</body>
-</html> 
+</html>

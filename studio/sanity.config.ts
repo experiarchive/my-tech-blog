@@ -5,6 +5,7 @@ import {table} from '@sanity/table'
 import post from './schemas/post'
 import category from './schemas/category'
 import blockContent from './schemas/blockContent'
+import linkPreview from './schemas/linkPreview'
 
 export default defineConfig({
   name: 'default',
@@ -16,6 +17,6 @@ export default defineConfig({
   plugins: [structureTool(), visionTool(), table()],
 
   schema: {
-    types: [post, category, blockContent],
+    types: [post, category, blockContent, linkPreview],
   },
 })

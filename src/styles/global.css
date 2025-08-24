@@ -2,131 +2,526 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 불릿포인트 레벨별 스타일 */
-.prose ul {
-  list-style-type: disc;
-}
-
-.prose ul ul {
-  list-style-type: circle;
-}
-
-.prose ul ul ul {
-  list-style-type: square;
-}
-
-/* 중첩된 리스트의 간격 조정 */
-.prose ul li {
-  margin-bottom: 0.5rem;
-}
-
-.prose ul ul li {
-  margin-bottom: 0.25rem;
-}
-
-/* 중첩된 리스트의 마진 조정 */
-.prose ul ul {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-
-/* 번호 목록 레벨별 스타일 */
-.prose ol {
-  list-style-type: decimal;
-  list-style-position: outside;
-  padding-left: 1.25rem; /* pl-5와 동일한 여백 */
-}
-.prose ol ol {
-  list-style-type: lower-alpha;
-}
-.prose ol ol ol {
-  list-style-type: lower-roman;
-}
-
-/* 번호 목록의 간격 조정 */
-.prose ol li {
-  margin-bottom: 0.5rem;
-}
-.prose ol ol li {
-  margin-bottom: 0.25rem;
-}
-
-/* 번호 목록의 중첩 마진 조정 */
-.prose ol ol {
-  margin-top: 0.25rem;
-  margin-bottom: 0.25rem;
-}
-
-/* 목록 내 단락 마진 제거로 마커 정렬 안정화 */
-.prose li p {
-  margin: 0;
-}
-
-@font-face {
-    font-family: 'Pretendard';
-    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
-}
-
+/* GeneratePress 스타일 기본 설정 */
 :root {
-	--accent: 124, 58, 237;
-	--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
+  /* GeneratePress 색상 팔레트 */
+  --gp-primary: #0073aa;
+  --gp-primary-dark: #005a87;
+  --gp-text: #222222;
+  --gp-text-light: #666666;
+  --gp-border: #e1e1e1;
+  --gp-background: #ffffff;
+  --gp-background-secondary: #f8f8f8;
+  
+  /* 다크 모드 색상 */
+  --gp-dark-bg: #1a1a1a;
+  --gp-dark-bg-secondary: #2a2a2a;
+  --gp-dark-text: #e1e1e1;
+  --gp-dark-text-light: #b1b1b1;
+  --gp-dark-border: #404040;
+  --gp-dark-primary: #4dc3ff;
 }
 
+/* 폰트 설정 */
 html {
-	font-family: 'Noto Sans KR', system-ui, sans-serif;
-	scroll-behavior: smooth;
-    scroll-padding-top: 5rem; /* 헤더 높이만큼 여백 추가 */
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
-    margin: 0;
-	padding: 0;
-	background-color: #fff; /* 라이트 모드 기본 배경색 */
-    color: #1f2937; /* 라이트 모드 기본 글자색 */
+  margin: 0;
+  padding: 0;
+  background-color: var(--gp-background);
+  color: var(--gp-text);
+  line-height: 1.6;
+  font-size: 16px;
 }
 
 .dark body {
-    background-color: #111827; /* 다크 모드 기본 배경색 */
-    color: #e5e7eb; /* 다크 모드 기본 글자색 */
+  background-color: var(--gp-dark-bg);
+  color: var(--gp-dark-text);
 }
 
-/*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/29645ac4798959bd7b2addfaeff442ca1d982992/templates/styles/blog/default.css
-  License: MIT
-  https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
-
-code {
-	font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-		Bitstream Vera Sans Mono, Courier New, monospace;
+/* GeneratePress 컨테이너 스타일 */
+.gp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-/* 본문 링크 가독성 개선 */
-.prose a {
-  color: #3d98f4; /* 기본 링크 색상 */
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1.5px;
+.gp-content-area {
+  max-width: 768px;
+  margin: 0 auto;
 }
-.prose a:hover {
-  color: #1d4ed8; /* hover 시 더 진한 파란색 */
-  text-decoration-thickness: 2px;
+
+/* 헤더 스타일 */
+.gp-header {
+  background: var(--gp-background);
+  border-bottom: 1px solid var(--gp-border);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-.prose a:visited {
-  color: #7c3aed; /* 방문한 링크 색상 */
+
+.dark .gp-header {
+  background: var(--gp-dark-bg);
+  border-bottom-color: var(--gp-dark-border);
 }
-.prose a * {
-  color: inherit; /* 링크 내부의 굵게/기울임 등도 링크 색을 상속 */
+
+.gp-site-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gp-text);
+  text-decoration: none;
+  line-height: 1.2;
 }
-.dark .prose a {
-  color: #60a5fa; /* 다크 모드 기본 링크 색상 */
+
+.dark .gp-site-logo {
+  color: var(--gp-dark-text);
 }
-.dark .prose a:hover {
-  color: #93c5fd; /* 다크 모드 hover 색상 */
+
+/* 네비게이션 */
+.gp-navigation a {
+  color: var(--gp-text-light);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
-.dark .prose a * {
+
+.gp-navigation a:hover {
+  color: var(--gp-primary);
+  background-color: rgba(0,115,170,0.1);
+}
+
+.dark .gp-navigation a {
+  color: var(--gp-dark-text-light);
+}
+
+.dark .gp-navigation a:hover {
+  color: var(--gp-dark-primary);
+  background-color: rgba(77,195,255,0.1);
+}
+
+/* 메인 콘텐츠 */
+.gp-main {
+  padding: 40px 0;
+  min-height: 60vh;
+}
+
+/* 포스트 카드 */
+.gp-post-card {
+  background: var(--gp-background);
+  border: 1px solid var(--gp-border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 30px;
+}
+
+.gp-post-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.dark .gp-post-card {
+  background: var(--gp-dark-bg-secondary);
+  border-color: var(--gp-dark-border);
+}
+
+.gp-post-thumbnail {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.gp-post-content {
+  padding: 24px;
+}
+
+.gp-post-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 12px 0;
+  color: var(--gp-text);
+}
+
+.gp-post-title a {
   color: inherit;
+  text-decoration: none;
+}
+
+.gp-post-title a:hover {
+  color: var(--gp-primary);
+}
+
+.dark .gp-post-title {
+  color: var(--gp-dark-text);
+}
+
+.dark .gp-post-title a:hover {
+  color: var(--gp-dark-primary);
+}
+
+.gp-post-meta {
+  font-size: 14px;
+  color: var(--gp-text-light);
+  margin-bottom: 16px;
+}
+
+.dark .gp-post-meta {
+  color: var(--gp-dark-text-light);
+}
+
+.gp-post-excerpt {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--gp-text-light);
+  margin-bottom: 16px;
+}
+
+.dark .gp-post-excerpt {
+  color: var(--gp-dark-text-light);
+}
+
+.gp-read-more {
+  color: var(--gp-primary);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gp-read-more:hover {
+  color: var(--gp-primary-dark);
+}
+
+.dark .gp-read-more {
+  color: var(--gp-dark-primary);
+}
+
+/* 포스트 상세 페이지 */
+.gp-entry-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--gp-border);
+}
+
+.dark .gp-entry-header {
+  border-bottom-color: var(--gp-dark-border);
+}
+
+.gp-entry-title {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 20px 0;
+  color: var(--gp-text);
+}
+
+.dark .gp-entry-title {
+  color: var(--gp-dark-text);
+}
+
+.gp-entry-meta {
+  font-size: 14px;
+  color: var(--gp-text-light);
+}
+
+.dark .gp-entry-meta {
+  color: var(--gp-dark-text-light);
+}
+
+/* GeneratePress 프로즈 스타일 */
+.gp-entry-content {
+  line-height: 1.8;
+  font-size: 16px;
+  color: var(--gp-text);
+}
+
+.dark .gp-entry-content {
+  color: var(--gp-dark-text);
+}
+
+.gp-entry-content p {
+  margin-bottom: 24px;
+}
+
+.gp-entry-content h1,
+.gp-entry-content h2,
+.gp-entry-content h3,
+.gp-entry-content h4 {
+  color: var(--gp-text);
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 32px 0 16px 0;
+}
+
+.dark .gp-entry-content h1,
+.dark .gp-entry-content h2,
+.dark .gp-entry-content h3,
+.dark .gp-entry-content h4 {
+  color: var(--gp-dark-text);
+}
+
+.gp-entry-content h1 { font-size: 28px; }
+.gp-entry-content h2 { font-size: 24px; }
+.gp-entry-content h3 { font-size: 20px; }
+.gp-entry-content h4 { font-size: 18px; }
+
+.gp-entry-content ul,
+.gp-entry-content ol {
+  margin-bottom: 24px;
+  padding-left: 30px;
+}
+
+.gp-entry-content ul {
+  list-style-type: disc;
+}
+
+.gp-entry-content ol {
+  list-style-type: decimal;
+}
+
+.gp-entry-content li {
+  margin-bottom: 8px;
+  display: list-item;
+}
+
+.gp-entry-content ul li {
+  list-style-type: disc;
+}
+
+.gp-entry-content ol li {
+  list-style-type: decimal;
+}
+
+.gp-entry-content ul ul {
+  list-style-type: circle;
+  margin: 8px 0;
+}
+
+.gp-entry-content ul ul ul {
+  list-style-type: square;
+}
+
+.gp-entry-content a {
+  color: var(--gp-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gp-entry-content a:hover {
+  color: var(--gp-primary-dark);
+}
+
+.dark .gp-entry-content a {
+  color: var(--gp-dark-primary);
+}
+
+.gp-entry-content blockquote {
+  border-left: 4px solid var(--gp-primary);
+  padding-left: 20px;
+  margin: 24px 0;
+  font-style: italic;
+  color: var(--gp-text-light);
+}
+
+.dark .gp-entry-content blockquote {
+  border-left-color: var(--gp-dark-primary);
+  color: var(--gp-dark-text-light);
+}
+
+/* 링크 프리뷰 카드 */
+.gp-link-preview {
+  border: 1px solid var(--gp-border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 24px 0;
+  background: var(--gp-background-secondary);
+  transition: all 0.2s ease;
+}
+
+.gp-link-preview:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.dark .gp-link-preview {
+  border-color: var(--gp-dark-border);
+  background: var(--gp-dark-bg-secondary);
+}
+
+.gp-link-preview-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.gp-link-preview-content {
+  padding: 20px;
+}
+
+.gp-link-preview-site {
+  font-size: 12px;
+  color: var(--gp-text-light);
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.dark .gp-link-preview-site {
+  color: var(--gp-dark-text-light);
+}
+
+.gp-link-preview-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gp-text);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.dark .gp-link-preview-title {
+  color: var(--gp-dark-text);
+}
+
+.gp-link-preview-description {
+  font-size: 14px;
+  color: var(--gp-text-light);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.dark .gp-link-preview-description {
+  color: var(--gp-dark-text-light);
+}
+
+.gp-link-preview-url {
+  font-size: 12px;
+  color: var(--gp-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dark .gp-link-preview-url {
+  color: var(--gp-dark-primary);
+}
+
+/* 자동 생성된 링크 프리뷰 스타일 */
+.auto-link-preview {
+  margin: 20px 0;
+}
+
+.auto-link-preview .gp-link-preview-content {
+  padding: 16px;
+}
+
+.auto-link-preview .gp-link-preview-title {
+  font-size: 16px;
+  margin: 8px 0 12px 0;
+}
+
+/* 링크 프리뷰 이미지 배경 */
+.gp-link-preview-image-container {
+  background: var(--gp-background-secondary) !important;
+}
+
+.dark .gp-link-preview-image-container {
+  background: var(--gp-dark-border) !important;
+}
+
+/* 링크 프리뷰 모바일 반응형 */
+@media (max-width: 640px) {
+  .gp-link-preview > a > div > div:first-child {
+    width: 120px !important;
+    height: 80px !important;
+  }
+}
+
+/* 푸터 */
+.gp-footer {
+  background: var(--gp-background-secondary);
+  border-top: 1px solid var(--gp-border);
+  padding: 40px 0;
+  text-align: center;
+  color: var(--gp-text-light);
+  font-size: 14px;
+}
+
+.dark .gp-footer {
+  background: var(--gp-dark-bg-secondary);
+  border-top-color: var(--gp-dark-border);
+  color: var(--gp-dark-text-light);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .gp-container {
+    padding: 0 15px;
+  }
+  
+  .gp-entry-title {
+    font-size: 24px;
+  }
+  
+  .gp-entry-content h1 { font-size: 22px; }
+  .gp-entry-content h2 { font-size: 20px; }
+  .gp-entry-content h3 { font-size: 18px; }
+  .gp-entry-content h4 { font-size: 16px; }
+  
+  .gp-link-preview {
+    margin: 20px -15px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* 다크 모드 토글 버튼 */
+.gp-dark-toggle {
+  background: none;
+  border: 1px solid var(--gp-border);
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  color: var(--gp-text-light);
+  transition: all 0.2s ease;
+}
+
+.gp-dark-toggle:hover {
+  background: var(--gp-background-secondary);
+  color: var(--gp-text);
+}
+
+.dark .gp-dark-toggle {
+  border-color: var(--gp-dark-border);
+  color: var(--gp-dark-text-light);
+}
+
+.dark .gp-dark-toggle:hover {
+  background: var(--gp-dark-bg-secondary);
+  color: var(--gp-dark-text);
+}
+
+/* 텍스트 제한 유틸리티 */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

@@ -1,62 +1,144 @@
 ---
-// src/pages/index.astro
-
-// 1. 필요한 도구들을 불러옵니다.
-import { client, getImageUrl } from '../../sanity/client';
+import { client } from '../../sanity/client';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// 2. Sanity에 데이터를 요청하는 '요청서(GROQ 쿼리)'를 작성합니다.
-// "post 타입의 문서를, 발행일 최신순으로 정렬해서, 3개만 가져와줘" 라는 뜻입니다.
-const query = `*[_type == "post"] | order(publishedAt desc)[0...3] {
+// 최신 포스트 가져오기 (썸네일 없이)
+const query = `*[_type == "post"] | order(publishedAt desc)[0...6] {
 	title,
 	"slug": slug.current,
-	mainImage {
-		asset->{
-			_id,
-			url
-		},
-		alt
-	},
+	publishedAt,
 	excerpt
 }`;
 
-// 3. 실제로 Sanity에 데이터를 요청하고 결과를 posts 변수에 저장합니다.
 const posts = await client.fetch(query);
-
-// 만약 데이터가 없으면 빈 배열로 처리합니다.
-if (!posts) {
-	// return new Response(null, {
-	//   status: 404,
-	//   statusText: 'Not found'
-	// });
-}
 ---
 
-<!-- 4. BaseLayout으로 전체 페이지를 감싸줍니다. title을 "Home"으로 설정합니다. -->
-<BaseLayout title="Home | Tech Tales" description="일상에서 도움이 되는 정보와 경제 지식을 공유합니다.">
-	<!-- main_page_ui.html의 구조를 가져옵니다. -->
-	<div class="px-4 sm:px-6 md:px-20 lg:px-40 flex flex-1 justify-center py-8">
-		<div class="layout-content-container flex flex-col max-w-4xl flex-1 gap-12">
-			<section class="mt-12">
-				<h2 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Latest Posts</h2>
-				<div class="mt-6 grid grid-cols-1 gap-8">
-					<!-- 5. Sanity에서 가져온 posts 데이터를 반복해서 화면에 표시합니다. -->
-					{posts && posts.map((post: any) => (
-						<a href={`/posts/${post.slug}`} class="group block p-6 bg-white rounded-lg border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300 dark:bg-gray-800 dark:border-gray-700">
-							<p class="text-sm text-gray-500 dark:text-gray-400">
-								{new Date(post.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-							</p>
-							<h3 class="mt-2 text-xl font-bold text-gray-900 dark:text-white">{post.title}</h3>
-							<p class="mt-3 text-base text-gray-600 dark:text-gray-300">{post.excerpt}</p>
-							<div class="mt-4 flex items-center text-primary-500 font-semibold group-hover:text-primary-600 dark:text-primary-400 dark:group-hover:text-primary-300">
-								<span class="underline">Read more</span>
-								<span class="material-icons ml-1">arrow_forward</span>
-							</div>
-						</a>
+<BaseLayout title="Home | Lintrahub" description="기술과 건강에 관한 유용한 정보를 공유하는 블로그입니다.">
+	<div class="gp-container">
+		<!-- 히어로 섹션 -->
+		<section style="text-align: center; padding: 60px 0; border-bottom: 1px solid var(--gp-border);">
+			<h1 style="font-size: 2.5rem; font-weight: 700; color: var(--gp-text); margin-bottom: 16px; line-height: 1.2;">
+				Lintrahub
+			</h1>
+			<p style="font-size: 1.125rem; color: var(--gp-text-light); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+				기술과 건강에 관한 유용한 정보를 공유하는 블로그입니다. 일상에서 도움이 되는 실용적인 지식을 전달합니다.
+			</p>
+		</section>
+
+		<!-- 최신 포스트 섹션 -->
+		<section style="padding: 60px 0;">
+			<h2 style="font-size: 1.875rem; font-weight: 600; color: var(--gp-text); margin-bottom: 40px; text-align: center;">
+				Latest Posts
+			</h2>
+			
+			{posts && posts.length > 0 && (
+				<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+					{posts.map((post: any) => (
+						<article class="gp-post-card">
+							<a href={`/posts/${post.slug}`} style="text-decoration: none; color: inherit; display: block;">
+								{/* 포스트 콘텐츠 */}
+								<div class="gp-post-content">
+									<div class="gp-post-meta">
+										{new Date(post.publishedAt).toLocaleDateString('ko-KR', { 
+											year: 'numeric', 
+											month: 'long', 
+											day: 'numeric' 
+										})}
+									</div>
+									
+									<h3 class="gp-post-title">
+										{post.title}
+									</h3>
+									
+									{post.excerpt && (
+										<p class="gp-post-excerpt line-clamp-3">
+											{post.excerpt}
+										</p>
+									)}
+									
+									<div class="gp-read-more">
+										Read more
+										<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+											<path d="M5 12h14M12 5l7 7-7 7"/>
+										</svg>
+									</div>
+								</div>
+							</a>
+						</article>
 					))}
 				</div>
-			</section>
-			<!-- "Popular Posts" 와 "About Me" 섹션은 나중에 추가하겠습니다. -->
-		</div>
+			)}
+			
+			{/* 더 많은 포스트 보기 링크 */}
+			<div style="text-align: center; margin-top: 50px;">
+				<a 
+					href="/posts" 
+					style="
+						display: inline-block;
+						background: var(--gp-primary);
+						color: white;
+						padding: 12px 24px;
+						border-radius: 6px;
+						text-decoration: none;
+						font-weight: 500;
+						transition: background-color 0.2s ease;
+					"
+					onmouseover="this.style.background='var(--gp-primary-dark)'"
+					onmouseout="this.style.background='var(--gp-primary)'"
+				>
+					View All Posts
+				</a>
+			</div>
+		</section>
+
+		<!-- 소개 섹션 -->
+		<section style="padding: 60px 0; background: var(--gp-background-secondary); margin: 0 -20px; padding-left: 20px; padding-right: 20px;">
+			<div style="max-width: 800px; margin: 0 auto; text-align: center;">
+				<h2 style="font-size: 1.875rem; font-weight: 600; color: var(--gp-text); margin-bottom: 24px;">
+					About Lintrahub
+				</h2>
+				<p style="font-size: 1.125rem; color: var(--gp-text-light); line-height: 1.7; margin-bottom: 24px;">
+					복잡한 기술을 쉽게 설명하고, 건강한 삶을 위한 실용적인 정보를 제공합니다. 
+					매주 새로운 글을 통해 여러분의 일상에 도움이 되는 지식을 나누고 있습니다.
+				</p>
+				<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 32px;">
+					<div style="text-align: center;">
+						<div style="font-size: 2rem; font-weight: 700; color: var(--gp-primary); margin-bottom: 8px;">
+							{posts ? posts.length * 5 : 0}+
+						</div>
+						<div style="color: var(--gp-text-light); font-size: 14px;">
+							Articles Published
+						</div>
+					</div>
+					<div style="text-align: center;">
+						<div style="font-size: 2rem; font-weight: 700; color: var(--gp-primary); margin-bottom: 8px;">
+							10K+
+						</div>
+						<div style="color: var(--gp-text-light); font-size: 14px;">
+							Monthly Readers
+						</div>
+					</div>
+					<div style="text-align: center;">
+						<div style="font-size: 2rem; font-weight: 700; color: var(--gp-primary); margin-bottom: 8px;">
+							5+
+						</div>
+						<div style="color: var(--gp-text-light); font-size: 14px;">
+							Years Experience
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
 	</div>
 </BaseLayout>
+
+<style>
+	@media (max-width: 640px) {
+		.gp-post-card {
+			margin: 0 -20px 30px -20px;
+			border-radius: 0;
+			border-left: none;
+			border-right: none;
+		}
+	}
+</style>
