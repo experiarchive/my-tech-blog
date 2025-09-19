@@ -1,0 +1,371 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>한강 버스 선착장 안내</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3505313580947440"
+    crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #fffdfb;
+      --primary: #2f4de6;
+      --accent: #ff7a59;
+      --text-dark: #2b2730;
+      --text-muted: #5f5b66;
+      --badge-regular: #3446a3;
+      --badge-express: #f05a3c;
+      --shadow: 0 20px 45px rgba(29, 37, 89, 0.15);
+      --radius-lg: 28px;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top left, #f3f4ff 0%, #f7f7f9 38%, var(--bg) 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 64px 24px 96px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: rgba(47, 77, 230, 0.08);
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .hero__title {
+      margin: 18px 0 12px;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .hero__subtitle {
+      margin: 0 auto;
+      max-width: 520px;
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    @media (min-width: 720px) {
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .card {
+      position: relative;
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(47, 77, 230, 0.08);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 60px rgba(29, 37, 89, 0.18);
+    }
+
+    .card__header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .card__title {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .badge--regular {
+      background: linear-gradient(135deg, var(--badge-regular), #5160e0);
+    }
+
+    .badge--express {
+      background: linear-gradient(135deg, var(--accent), #ff9965);
+    }
+
+    .card__address {
+      margin: 0 0 16px;
+      padding: 0 0 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      color: var(--text-muted);
+      font-size: 0.98rem;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      letter-spacing: 0.02em;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .info-list li span {
+      display: inline-block;
+      min-width: 54px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .ad-slot {
+      position: relative;
+      margin: 32px auto 40px;
+      padding: 24px;
+      max-width: 728px;
+      border-radius: 24px;
+      background: rgba(47, 77, 230, 0.08);
+      border: 1px solid rgba(47, 77, 230, 0.15);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .ad-slot--inline {
+      margin: 12px 0 8px;
+      grid-column: 1 / -1;
+      max-width: none;
+    }
+
+    .ad-slot__label {
+      position: absolute;
+      top: -14px;
+      left: 24px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--primary);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 8px 18px rgba(29, 37, 89, 0.14);
+    }
+
+    .ad-slot ins.adsbygoogle {
+      display: block;
+      width: 100%;
+    }
+
+    footer {
+      margin-top: 64px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 639px) {
+      .ad-slot {
+        padding: 18px 16px;
+        margin: 28px auto 36px;
+        border-radius: 20px;
+      }
+
+      .ad-slot__label {
+        left: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="hero__eyebrow">HAN RIVER BUS PIER</div>
+      <h1 class="hero__title">한강 버스 선착장 연계 교통 한눈에 보기</h1>
+      <p class="hero__subtitle">
+        한강 수상택시와 버스를 이용할 때 필요한 선착장 위치와 주변 연계교통 정보를 알기 쉽게 정리했습니다.
+        가까운 선착장을 찾아 이동 계획을 세워보세요.
+      </p>
+    </section>
+
+    <section class="ad-slot">
+      <span class="ad-slot__label">SPONSORED</span>
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-3505313580947440"
+           data-ad-slot="8596674653"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">마곡선착장</h2>
+          <span class="badge badge--regular">일반</span>
+          <span class="badge badge--express">급행</span>
+        </header>
+        <p class="card__address">강서구 가양동 441 일대</p>
+        <h3 class="section-title">연계교통</h3>
+        <ul class="info-list">
+          <li><span>지하철</span> 양천향교역 (9호선)</li>
+          <li><span>버스</span> 가양나들목 도보 3분 (시내버스, 셔틀버스)</li>
+          <li><span>따릉이</span> 가양나들목승강기 인근 도보 2분</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">망원선착장</h2>
+          <span class="badge badge--regular">일반</span>
+        </header>
+        <p class="card__address">마포구 망원동 205-8 일대</p>
+        <h3 class="section-title">연계교통</h3>
+        <ul class="info-list">
+          <li><span>지하철</span> 망원역·마포구청역 (6호선)</li>
+          <li><span>버스</span> 망원나들목 도보 5분 (시내버스, 마을버스)</li>
+          <li><span>따릉이</span> 망원한강공원 1호 매점 인근 도보 2분</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">여의도선착장</h2>
+          <span class="badge badge--regular">일반</span>
+          <span class="badge badge--express">급행</span>
+        </header>
+        <p class="card__address">영등포구 여의도동 85-1 일대</p>
+        <h3 class="section-title">연계교통</h3>
+        <ul class="info-list">
+          <li><span>지하철</span> 여의나루역 (5호선, 9호선)</li>
+          <li><span>버스</span> 여의나루역 도보 4분 (시내버스, 마을버스)</li>
+          <li><span>따릉이</span> 선착장 인근 도보 1분</li>
+        </ul>
+      </article>
+
+      <section class="ad-slot ad-slot--inline">
+        <span class="ad-slot__label">SPONSORED</span>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-3505313580947440"
+             data-ad-slot="8596674653"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </section>
+
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">압구정선착장</h2>
+          <span class="badge badge--regular">일반</span>
+        </header>
+        <p class="card__address">강남구 압구정동 380-1 일대</p>
+        <h3 class="section-title">연계교통</h3>
+        <ul class="info-list">
+          <li><span>지하철</span> 압구정역 (3호선)</li>
+          <li><span>버스</span> 신사나들목 도보 5분 (시내버스, 셔틀버스)</li>
+          <li><span>따릉이</span> 잠원한강공원 1호 매점 인근 도보 1분</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">옥수선착장</h2>
+          <span class="badge badge--regular">일반</span>
+        </header>
+        <p class="card__address">성동구 옥수동 86 일대</p>
+        <h3 class="section-title">연계교통</h3>
+        <ul class="info-list">
+          <li><span>지하철</span> 옥수역 (3호선, 경의중앙선)</li>
+          <li><span>버스</span> 옥수역 도보 5분 (마을버스)</li>
+          <li><span>따릉이</span> 선착장 인근 도보 1분</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">뚝섬선착장</h2>
+          <span class="badge badge--regular">일반</span>
+        </header>
+        <p class="card__address">광진구 자양동 126-1 일대</p>
+        <h3 class="section-title">연계교통</h3>
+        <ul class="info-list">
+          <li><span>지하철</span> 자양역 (7호선)</li>
+          <li><span>버스</span> 자양4동주민센터 앞 도보 10분 (시내버스)</li>
+          <li><span>따릉이</span> 뚝섬수영장 옆 화장실 인근 도보 3분</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <header class="card__header">
+          <h2 class="card__title">잠실선착장</h2>
+          <span class="badge badge--regular">일반</span>
+          <span class="badge badge--express">급행</span>
+        </header>
+        <p class="card__address">송파구 잠실동 1-2 일대</p>
+        <h3 class="section-title">연계교통</h3>
+        <ul class="info-list">
+          <li><span>지하철</span> 잠실새내역 (2호선), 잠실역 (2호선, 8호선)</li>
+          <li><span>버스</span> 잠실새내나들목 도보 5분 (시내버스, 셔틀버스)</li>
+          <li><span>따릉이</span> 잠실물놀이장 인근 도보 2분</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer>
+      최신 정보는 서울 한강공원 안내를 참고해주세요.
+    </footer>
+  </main>
+</body>
+</html>
