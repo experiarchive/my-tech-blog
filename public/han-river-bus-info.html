@@ -168,9 +168,9 @@
 
     .ad-slot {
       position: relative;
-      margin: 32px auto 40px;
+      margin: 32px 0 40px;
       padding: 24px;
-      max-width: 728px;
+      width: 100%;
       border-radius: 24px;
       background: rgba(47, 77, 230, 0.08);
       border: 1px solid rgba(47, 77, 230, 0.15);
@@ -178,9 +178,13 @@
     }
 
     .ad-slot--inline {
-      margin: 12px 0 8px;
+      margin: 32px 0 40px;
       grid-column: 1 / -1;
-      max-width: none;
+      justify-self: stretch;
+    }
+
+    .ad-slot--hero {
+      margin-top: 24px;
     }
 
     .ad-slot__label {
@@ -234,7 +238,7 @@
       </p>
     </section>
 
-    <section class="ad-slot">
+    <section class="ad-slot ad-slot--inline ad-slot--hero">
       <span class="ad-slot__label">SPONSORED</span>
       <ins class="adsbygoogle"
            style="display:block"
