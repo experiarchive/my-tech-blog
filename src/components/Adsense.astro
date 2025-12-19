@@ -1,20 +1,25 @@
 ---
 export interface Props {
-  slot: string;
-  format?: string;
+     slot: string;
+     format?: string;
 }
-const { slot, format = 'auto' } = Astro.props;
+const { slot, format = "auto" } = Astro.props;
 ---
 
-<ins class="adsbygoogle"
+<ins
+     class="adsbygoogle"
      style="display:block; width:100%; min-height:250px;"
      data-ad-client="ca-pub-3505313580947440"
      data-ad-slot={slot}
      data-ad-format={format}
      data-full-width-responsive="true"></ins>
-<script define:vars={{slot}}>
-     setTimeout(() => {
-          console.log('🎯 AdSense: Initializing slot ' + slot);
-          (adsbygoogle = window.adsbygoogle || []).push({});
-     }, 100);
+<script is:inline define:vars={{ slot }}>
+     (function () {
+          try {
+               console.log("🎯 AdSense: Initializing slot " + slot);
+               (window.adsbygoogle = window.adsbygoogle || []).push({});
+          } catch (e) {
+               console.error("❌ AdSense Error:", e);
+          }
+     })();
 </script>

@@ -1,10 +1,10 @@
 ---
-import { toHTML } from '@portabletext/to-html';
-import { client, getImageUrl } from '../../../sanity/client';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { Image } from 'astro:assets';
-import Adsense from '../../components/Adsense.astro';
-import { fetchLinkMetadata } from '../../utils/linkPreview';
+import { toHTML } from "@portabletext/to-html";
+import { client, getImageUrl } from "../../../sanity/client";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Image } from "astro:assets";
+import Adsense from "../../components/Adsense.astro";
+import { fetchLinkMetadata } from "../../utils/linkPreview";
 
 export async function getStaticPaths() {
   const query = `*[_type == "post" && defined(slug.current)][] { "slug": slug.current }`;
@@ -35,17 +35,40 @@ const query = `*[_type == "post" && slug.current == $slug][0] {
 const post = await client.fetch(query, { slug });
 
 if (!post) {
-  return Astro.redirect('/404');
+  return Astro.redirect("/404");
 }
 
-const description = post.excerpt?.trim() || `${post.title}에 대한 자세한 내용을 확인해보세요.`;
+const description =
+  post.excerpt?.trim() || `${post.title}에 대한 자세한 내용을 확인해보세요.`;
+
+// H2 카운터 (본문 중간 광고 삽입용)
+let h2Count = 0;
 
 // GeneratePress 스타일 렌더링 컴포넌트
 const renderComponents = {
   block: {
     normal: ({ children }: any) => `<p>${children}</p>`,
     h1: ({ children }: any) => `<h1>${children}</h1>`,
-    h2: ({ children }: any) => `<h2>${children}</h2>`,
+    h2: ({ children }: any) => {
+      h2Count++;
+      const adCode =
+        import.meta.env.PROD && h2Count === 2
+          ? `
+        <div style="margin: 32px 0; text-align: center;">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-3505313580947440"
+               data-ad-slot="1621596982"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      `
+          : "";
+      return `<h2>${children}</h2>${adCode}`;
+    },
     h3: ({ children }: any) => `<h3>${children}</h3>`,
     h4: ({ children }: any) => `<h4>${children}</h4>`,
     blockquote: ({ children }: any) => `<blockquote>${children}</blockquote>`,
@@ -63,20 +86,34 @@ const renderComponents = {
     em: ({ children }: any) => `<em>${children}</em>`,
     link: ({ children, value }: any) => {
       const href = value.href;
-      
+
       // 특정 도메인들을 자동 링크 프리뷰로 처리
-      const previewDomains = ['coupang.com', 'amazon.com', 'gmarket.co.kr', '11st.co.kr', 'interpark.com'];
-      const shouldShowPreview = previewDomains.some(domain => href.includes(domain));
-      
+      const previewDomains = [
+        "coupang.com",
+        "amazon.com",
+        "gmarket.co.kr",
+        "11st.co.kr",
+        "interpark.com",
+      ];
+      const shouldShowPreview = previewDomains.some((domain) =>
+        href.includes(domain),
+      );
+
       if (shouldShowPreview) {
         // 기본 링크 프리뷰 카드 생성 (메타데이터 없이)
-        const hostname = new URL(href).hostname.replace('www.', '').replace('link.', '');
-        const siteName = hostname.includes('coupang') ? 'COUPANG' : 
-                        hostname.includes('amazon') ? 'AMAZON' :
-                        hostname.includes('gmarket') ? 'GMARKET' :
-                        hostname.includes('11st') ? '11번가' :
-                        hostname.toUpperCase();
-        
+        const hostname = new URL(href).hostname
+          .replace("www.", "")
+          .replace("link.", "");
+        const siteName = hostname.includes("coupang")
+          ? "COUPANG"
+          : hostname.includes("amazon")
+            ? "AMAZON"
+            : hostname.includes("gmarket")
+              ? "GMARKET"
+              : hostname.includes("11st")
+                ? "11번가"
+                : hostname.toUpperCase();
+
         return `
           <div class="gp-link-preview auto-link-preview">
             <a href="${href}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
@@ -96,45 +133,58 @@ const renderComponents = {
           </div>
         `;
       }
-      
+
       // 일반 링크는 기존 방식대로 처리
       return `<a href="${href}" target="_blank" rel="noopener noreferrer">${children}</a>`;
     },
   },
   types: {
     image: ({ value }: any) => {
-      if (!value?.asset) return '';
+      if (!value?.asset) return "";
       const imageUrl = getImageUrl(value.asset, { width: 800 });
-      const alt = value.alt || 'Image';
+      const alt = value.alt || "Image";
       const caption = value.caption;
       return `
         <figure style="margin: 32px 0;">
           <img src="${imageUrl}" alt="${alt}" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" loading="lazy" />
-          ${caption ? `<figcaption style="text-align: center; font-size: 14px; color: var(--gp-text-light); margin-top: 12px; font-style: italic;">${caption}</figcaption>` : 
-            (value.alt ? `<figcaption style="text-align: center; font-size: 14px; color: var(--gp-text-light); margin-top: 12px; font-style: italic;">${value.alt}</figcaption>` : '')}
+          ${
+            caption
+              ? `<figcaption style="text-align: center; font-size: 14px; color: var(--gp-text-light); margin-top: 12px; font-style: italic;">${caption}</figcaption>`
+              : value.alt
+                ? `<figcaption style="text-align: center; font-size: 14px; color: var(--gp-text-light); margin-top: 12px; font-style: italic;">${value.alt}</figcaption>`
+                : ""
+          }
         </figure>
       `;
     },
     linkPreview: ({ value }: any) => {
-      if (!value?.url) return '';
+      if (!value?.url) return "";
       const { url, title, description, imageUrl, siteName } = value;
       // imageUrl 필드를 먼저 확인하고, 없으면 기존 image.asset 방식을 사용
-      const finalImageUrl = imageUrl || (value.image?.asset ? getImageUrl(value.image.asset, { width: 400, height: 200 }) : '');
-      
+      const finalImageUrl =
+        imageUrl ||
+        (value.image?.asset
+          ? getImageUrl(value.image.asset, { width: 400, height: 200 })
+          : "");
+
       return `
         <div class="gp-link-preview">
           <a href="${url}" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: inherit;">
             <div style="display: flex; gap: 16px; align-items: flex-start;">
-              ${finalImageUrl ? `
+              ${
+                finalImageUrl
+                  ? `
                 <div class="gp-link-preview-image-container" style="flex-shrink: 0; width: 200px; height: 120px; overflow: hidden; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                  <img src="${finalImageUrl}" alt="${title || 'Preview'}" class="gp-link-preview-image" loading="lazy" 
+                  <img src="${finalImageUrl}" alt="${title || "Preview"}" class="gp-link-preview-image" loading="lazy" 
                        style="max-width: 100%; max-height: 100%; object-fit: contain;" />
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               <div class="gp-link-preview-content" style="flex: 1; min-width: 0;">
-                ${title ? `<h3 class="gp-link-preview-title line-clamp-2" style="margin: 0 0 8px 0;">${title}</h3>` : ''}
-                ${siteName ? `<div class="gp-link-preview-site" style="margin-bottom: 8px;">${siteName}</div>` : ''}
-                ${description ? `<p class="gp-link-preview-description line-clamp-3" style="margin-bottom: 12px;">${description}</p>` : ''}
+                ${title ? `<h3 class="gp-link-preview-title line-clamp-2" style="margin: 0 0 8px 0;">${title}</h3>` : ""}
+                ${siteName ? `<div class="gp-link-preview-site" style="margin-bottom: 8px;">${siteName}</div>` : ""}
+                ${description ? `<p class="gp-link-preview-description line-clamp-3" style="margin-bottom: 12px;">${description}</p>` : ""}
                 <div class="gp-link-preview-url">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -149,7 +199,7 @@ const renderComponents = {
     },
     table: ({ value }: any) => {
       const { rows } = value;
-      if (!rows || rows.length === 0) return '';
+      if (!rows || rows.length === 0) return "";
       const headerRow = rows[0];
       const bodyRows = rows.slice(1);
       return `
@@ -157,25 +207,35 @@ const renderComponents = {
           <table style="width: 100%; border-collapse: collapse;">
             <thead style="background: var(--gp-background-secondary);">
               <tr>
-                ${headerRow.cells.map((cell: any) => 
-                  `<th style="border-bottom: 1px solid var(--gp-border); padding: 12px; text-align: left; font-weight: 600; color: var(--gp-text);">${cell || ''}</th>`
-                ).join('')}
+                ${headerRow.cells
+                  .map(
+                    (cell: any) =>
+                      `<th style="border-bottom: 1px solid var(--gp-border); padding: 12px; text-align: left; font-weight: 600; color: var(--gp-text);">${cell || ""}</th>`,
+                  )
+                  .join("")}
               </tr>
             </thead>
             <tbody>
-              ${bodyRows.map((row: any) => `
+              ${bodyRows
+                .map(
+                  (row: any) => `
                 <tr style="border-bottom: 1px solid var(--gp-border);">
-                  ${row.cells.map((cell: any) => 
-                    `<td style="padding: 12px; color: var(--gp-text-light);">${cell || ''}</td>`
-                  ).join('')}
+                  ${row.cells
+                    .map(
+                      (cell: any) =>
+                        `<td style="padding: 12px; color: var(--gp-text-light);">${cell || ""}</td>`,
+                    )
+                    .join("")}
                 </tr>
-              `).join('')}
+              `,
+                )
+                .join("")}
             </tbody>
           </table>
         </div>
       `;
-    }
-  }
+    },
+  },
 };
 
 const htmlContent = toHTML(post.body || [], { components: renderComponents });
@@ -189,52 +249,64 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
         <header class="gp-entry-header">
           <h1 class="gp-entry-title">{post.title}</h1>
           <div class="gp-entry-meta">
-            <span>Published on {new Date(post.publishedAt).toLocaleDateString('ko-KR', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}</span>
-            {post.category && (
-              <>
-                <span> • </span>
-                <span>{post.category}</span>
-              </>
-            )}
+            <span
+              >Published on {
+                new Date(post.publishedAt).toLocaleDateString("ko-KR", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              }</span
+            >
+            {
+              post.category && (
+                <>
+                  <span> • </span>
+                  <span>{post.category}</span>
+                </>
+              )
+            }
           </div>
         </header>
 
         <!-- 메인 이미지 -->
-        {post.mainImage?.asset && (
-          <div style="margin: 40px 0;">
-            <Image
-              style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
-              src={post.mainImage.asset.url}
-              width={post.mainImage.asset.dimensions.width}
-              height={post.mainImage.asset.dimensions.height}
-              format="webp"
-              alt={post.mainImage.alt || post.title}
-              loading="eager"
-              fetchpriority="high"
-            />
-          </div>
-        )}
+        {
+          post.mainImage?.asset && (
+            <div style="margin: 40px 0;">
+              <Image
+                style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+                src={post.mainImage.asset.url}
+                width={post.mainImage.asset.dimensions.width}
+                height={post.mainImage.asset.dimensions.height}
+                format="webp"
+                alt={post.mainImage.alt || post.title}
+                loading="eager"
+                fetchpriority="high"
+              />
+            </div>
+          )
+        }
 
         <!-- 상단 광고 (prod only) -->
-        {import.meta.env.PROD && (
-          <div style="margin: 32px 0; text-align: center;">
-            <Adsense slot="2197969029" />
-          </div>
-        )}
+        {
+          import.meta.env.PROD && (
+            <div style="margin: 32px 0; text-align: center;">
+              <Adsense slot="2197969029" />
+            </div>
+          )
+        }
 
         <!-- 포스트 콘텐츠 -->
         <div class="gp-entry-content" set:html={htmlContent} />
 
         <!-- 하단 광고 (prod only) -->
-        {import.meta.env.PROD && (
-          <div style="margin: 32px 0; text-align: center;">
-            <Adsense slot="8899108740" />
-          </div>
-        )}
+        {
+          import.meta.env.PROD && (
+            <div style="margin: 32px 0; text-align: center;">
+              <Adsense slot="8899108740" />
+            </div>
+          )
+        }
       </article>
     </div>
   </div>
@@ -252,4 +324,3 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
     }
   }
 </style>
-
