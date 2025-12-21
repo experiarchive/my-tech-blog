@@ -4,6 +4,7 @@ import { client, getImageUrl } from "../../../sanity/client";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
 import Adsense from "../../components/Adsense.astro";
+import RelatedPosts from "../../components/RelatedPosts.astro";
 import { fetchLinkMetadata } from "../../utils/linkPreview";
 
 export async function getStaticPaths() {
@@ -29,7 +30,19 @@ const query = `*[_type == "post" && slug.current == $slug][0] {
   },
   body,
   excerpt,
-  "category": categories[0]->title
+  "category": categories[0]->title,
+  "relatedPosts": *[_type == "post" && references(^.categories[0]._ref) && slug.current != $slug] | order(publishedAt desc)[0...3] {
+    title,
+    "slug": slug.current,
+    publishedAt,
+    "mainImage": mainImage {
+      asset->{
+        url,
+        "dimensions": metadata.dimensions
+      },
+      alt
+    }
+  }
 }`;
 
 const post = await client.fetch(query, { slug });
@@ -309,6 +322,9 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
           )
         }
       </article>
+
+      <!-- 관련 글 섹션 (Footer 위, 광고 하단) -->
+      <RelatedPosts posts={post.relatedPosts} />
     </div>
   </div>
 </BaseLayout>
