@@ -146,7 +146,7 @@ const renderComponents = {
       const caption = value.caption;
       return `
         <figure style="margin: 32px 0;">
-          <img src="${imageUrl}" alt="${alt}" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);" loading="lazy" />
+          <img src="${imageUrl}" alt="${alt}" data-zoomable style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: zoom-in;" loading="lazy" />
           ${
             caption
               ? `<figcaption style="text-align: center; font-size: 14px; color: var(--gp-text-light); margin-top: 12px; font-style: italic;">${caption}</figcaption>`
@@ -274,7 +274,7 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
           post.mainImage?.asset && (
             <div style="margin: 40px 0;">
               <Image
-                style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+                style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: zoom-in;"
                 src={post.mainImage.asset.url}
                 width={post.mainImage.asset.dimensions.width}
                 height={post.mainImage.asset.dimensions.height}
@@ -282,6 +282,7 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
                 alt={post.mainImage.alt || post.title}
                 loading="eager"
                 fetchpriority="high"
+                data-zoomable
               />
             </div>
           )
@@ -312,6 +313,31 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
   </div>
 </BaseLayout>
 
+<script>
+  import mediumZoom from "medium-zoom";
+
+  function initZoom() {
+    const isDark = document.documentElement.classList.contains("dark");
+    mediumZoom("[data-zoomable]", {
+      margin: 24,
+      background: isDark ? "#111827" : "#ffffff", // gray-900 or white
+    });
+  }
+
+  // 초기 실행
+  initZoom();
+
+  // 테마 변경 대응 (옵션)
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === "class") {
+        initZoom();
+      }
+    });
+  });
+  observer.observe(document.documentElement, { attributes: true });
+</script>
+
 <!-- GeneratePress 스타일 적용을 위한 추가 CSS -->
 <style>
   @media (max-width: 640px) {
@@ -322,5 +348,13 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
       border-left: none;
       border-right: none;
     }
+  }
+
+  /* 줌 상태일 때 오버레이 스타일 조정 (필요시) */
+  .medium-zoom-overlay {
+    z-index: 100;
+  }
+  .medium-zoom-image--opened {
+    z-index: 101;
   }
 </style>
