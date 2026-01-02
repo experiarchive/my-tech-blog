@@ -3,7 +3,6 @@ import { toHTML } from "@portabletext/to-html";
 import { client, getImageUrl } from "../../../sanity/client";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { Image } from "astro:assets";
-import Adsense from "../../components/Adsense.astro";
 import RelatedPosts from "../../components/RelatedPosts.astro";
 import { fetchLinkMetadata } from "../../utils/linkPreview";
 
@@ -54,34 +53,12 @@ if (!post) {
 const description =
   post.excerpt?.trim() || `${post.title}에 대한 자세한 내용을 확인해보세요.`;
 
-// H2 카운터 (본문 중간 광고 삽입용)
-let h2Count = 0;
-
 // GeneratePress 스타일 렌더링 컴포넌트
 const renderComponents = {
   block: {
     normal: ({ children }: any) => `<p>${children}</p>`,
     h1: ({ children }: any) => `<h1>${children}</h1>`,
-    h2: ({ children }: any) => {
-      h2Count++;
-      const adCode =
-        import.meta.env.PROD && h2Count === 2
-          ? `
-        <div style="margin: 32px 0; text-align: center;">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-3505313580947440"
-               data-ad-slot="1621596982"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>
-               (adsbygoogle = window.adsbygoogle || []).push({});
-          </script>
-        </div>
-      `
-          : "";
-      return `<h2>${children}</h2>${adCode}`;
-    },
+    h2: ({ children }: any) => `<h2>${children}</h2>`,
     h3: ({ children }: any) => `<h3>${children}</h3>`,
     h4: ({ children }: any) => `<h4>${children}</h4>`,
     blockquote: ({ children }: any) => `<blockquote>${children}</blockquote>`,
@@ -301,26 +278,8 @@ const htmlContent = toHTML(post.body || [], { components: renderComponents });
           )
         }
 
-        <!-- 상단 광고 (prod only) -->
-        {
-          import.meta.env.PROD && (
-            <div style="margin: 32px 0; text-align: center;">
-              <Adsense slot="2197969029" />
-            </div>
-          )
-        }
-
         <!-- 포스트 콘텐츠 -->
         <div class="gp-entry-content" set:html={htmlContent} />
-
-        <!-- 하단 광고 (prod only) -->
-        {
-          import.meta.env.PROD && (
-            <div style="margin: 32px 0; text-align: center;">
-              <Adsense slot="8899108740" />
-            </div>
-          )
-        }
       </article>
 
       <!-- 관련 글 섹션 (Footer 위, 광고 하단) -->
